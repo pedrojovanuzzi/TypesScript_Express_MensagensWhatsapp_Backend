@@ -1,0 +1,28 @@
+{
+  "name": "typesscript_express_mensagenswhatsapp_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start": "ts-node src/server.ts",
+    "dev": "nodemon --exec ts-node src/server.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mysql2": "^3.11.0",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.20",
+    "whatsapp": "^0.0.5-Alpha"
+  }
+}
