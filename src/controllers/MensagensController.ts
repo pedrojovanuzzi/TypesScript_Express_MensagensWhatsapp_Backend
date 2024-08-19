@@ -10,16 +10,24 @@ const waPhonerNumberId = Number(process.env.WA_PHONE_NUMBER_ID);
 const wa = new WhatsApp(waPhonerNumberId);
 const Token = String(process.env.CLOUD_API_ACCESS_TOKEN);
 const was_token_changed = wa.updateAccessToken(Token);
+const API_PASSWORD = process.env.API_PASSWORD;
+
 
 class MensagensController{
 
     async MensagensComuns(req : Request, res : Response){
         const {msg, bairro} = req.query;
+        const {password} = req.body;
 
         console.log(req.query);
         
-
-        const resultados = AppDataSource.getRepository(User);
+        if(password != API_PASSWORD){
+            console.log("Senha Incorreta");
+            res.sendStatus(400);
+            
+        }
+        else{
+            const resultados = AppDataSource.getRepository(User);
 
         let UppercaseBairro! : string;
 
@@ -65,6 +73,8 @@ class MensagensController{
                 console.log( JSON.stringify( e ) );
             }
         }) 
+        }
+        
     }
 }
 
