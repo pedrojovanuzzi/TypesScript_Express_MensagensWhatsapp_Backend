@@ -58,7 +58,7 @@ class MensagensController{
             res.send("Sem Clientes")
         }
 
-        clientes.map(async (client) => {
+        clientes.map(async (client : any) => {
             try{
 
                 const test: MessageTemplateObject<ComponentTypesEnum> = {
@@ -134,7 +134,7 @@ class MensagensController{
                 res.send("Sem Clientes")
             }
 
-            clientes.map(async (client) => {
+            clientes.map(async (client : any) => {
                 try{
     
                     const test: MessageTemplateObject<ComponentTypesEnum> = {
