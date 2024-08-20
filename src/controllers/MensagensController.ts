@@ -3,6 +3,10 @@ import dotenv from 'dotenv';
 import { Request, Response, NextFunction } from 'express';
 import {User} from "../entities/User"
 import {AppDataSource} from "../database/ds"
+import { ComponentTypesEnum } from 'whatsapp/build/types/enums';
+import { MessageTemplateObject } from 'whatsapp/build/types/messages';
+import { LanguagesEnum } from 'whatsapp/build/types/enums';
+import { ParametersTypesEnum } from 'whatsapp/build/types/enums';
 
 dotenv.config();
 
@@ -13,9 +17,11 @@ const was_token_changed = wa.updateAccessToken(Token);
 const API_PASSWORD = process.env.API_PASSWORD;
 
 
+
+
 class MensagensController{
 
-    async MensagensComuns(req : Request, res : Response){
+    async MensagensBairro(req : Request, res : Response){
         const {msg, bairro} = req.query;
         const {password} = req.body;
 
@@ -55,27 +61,112 @@ class MensagensController{
         clientes.map(async (client) => {
             try{
 
+                const test: MessageTemplateObject<ComponentTypesEnum> = {
+                    name: "aviso_bairro",
+                    language: {
+                        code: LanguagesEnum.Portuguese_BR,
+                        policy: 'deterministic'
+                    },
+                    components: [
+                        {
+                            type: ComponentTypesEnum.Header,
+                            parameters: [
+                                {
+                                    type: ParametersTypesEnum.Text,
+                                    text: UppercaseBairro
+                                }
+                            ]
+                        },
+                        {
+                            type: ComponentTypesEnum.Body,
+                            parameters: [
+                                {
+                                    type: ParametersTypesEnum.Text,
+                                    text: String(msg),
+                                },
+                                {
+                                    type: ParametersTypesEnum.Text,
+                                    text: UppercaseBairro,
+                                }
+                            ],
+                        }
+                    ],
+                };
+
                 const number = Number("55" + client.celular.replace(/[^\d]/g, ''));
 
                 console.log(number);
                 
-
-                const sent_text_message = wa.messages.text( { "body" : String(msg) }, number);
         
-                await sent_text_message.then( ( res ) =>
-                {
-                    // console.log( res.rawResponse() );                  
-                } );
-                res.sendStatus(200);
+                await wa.messages.template( test, number ).then( ( res ) =>
+                    {
+                        console.log( res.rawResponse() );
+                    } );
+                
             }
             catch( e )
             {
                 console.log( JSON.stringify( e ) );
             }
+            res.sendStatus(200);
         }) 
         }
         
     }
+
+    async MensagemConhecerBot(req : Request, res : Response){
+        const {password} = req.body;
+
+        console.log(password);
+        
+
+        if(password != API_PASSWORD){
+            console.log("Senha Incorreta");
+            res.sendStatus(400);
+        }
+        else{
+            const resultados = AppDataSource.getRepository(User);
+
+            const clientes = await resultados.find({take: 250});
+
+            if(!clientes){
+                console.log("Sem Clientes");
+                res.send("Sem Clientes")
+            }
+
+            clientes.map(async (client) => {
+                try{
+    
+                    const test: MessageTemplateObject<ComponentTypesEnum> = {
+                        name: "notificao_bot",
+                        language: {
+                            code: LanguagesEnum.Portuguese_BR,
+                            policy: 'deterministic'
+                        },
+                    };
+    
+                    const number = Number("55" + client.celular.replace(/[^\d]/g, ''));
+    
+                    console.log(number);
+                    
+            
+                    await wa.messages.template( test, number ).then( ( res ) =>
+                        {
+                            console.log( res.rawResponse() );
+                        } );
+                    
+                }
+                catch( e )
+                {
+                    console.log( JSON.stringify( e ) );
+                }
+                res.sendStatus(200);
+            }) 
+
+        }
+
+    }
+
 }
 
 export default new MensagensController();
