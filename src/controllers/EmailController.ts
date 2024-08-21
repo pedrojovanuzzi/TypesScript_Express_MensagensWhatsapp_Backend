@@ -66,7 +66,7 @@ class EmailController {
 
         clientes.map(async (client : any) => {
             try {
-            let msg = `${client.login.toUpperCase()} Segue a Linha Digitavel do seu Boleto da Mensalidade\n`;
+            let msg = `${client.login.toUpperCase()} Segue a Linha Digitavel do seu Boleto da Mensalidade: \n`;
             msg += `${client.linhadig} \n`;
             
             const idBoleto = client.uuid_lanc; 
@@ -76,7 +76,7 @@ class EmailController {
             
             
             if (pix) {  // Verifica se pix e pix.qrcode existem
-                msg += "\nSegue Codigo Copia e Cola do Pix\n\n";
+                msg += "\nSegue Codigo Copia e Cola do Pix: \n\n";
                 msg += `${pix.qrcode}\n`;
             } 
 
