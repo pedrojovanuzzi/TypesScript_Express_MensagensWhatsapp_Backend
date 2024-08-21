@@ -84,9 +84,6 @@ export class Record {
     chave_gnet2!: string;
 
   @Column({ type: 'varchar', length: 32, nullable: true })
-    chave_bfacil!: string;
-
-  @Column({ type: 'varchar', length: 32, nullable: true })
     chave_juno!: string;
 
   @Column({ type: 'varchar', length: 32, nullable: true })
@@ -176,6 +173,4 @@ export class Record {
   @Column({ type: 'tinyint', nullable: true, default: 0 })
     oco06!: number;
 
-  @Column({ type: 'varchar', length: 64, nullable: true })
-    codigo_barras!: string;
 }

@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export const AppDataSource = new DataSource({
+export const AppDataSourceBoleto = new DataSource({
   type: "mariadb",
   host: process.env.DATABASE_HOST_API,
   port: 3306,
@@ -16,10 +16,10 @@ export const AppDataSource = new DataSource({
   synchronize: false,
 });
 
-AppDataSource.initialize()
+AppDataSourceBoleto.initialize()
   .then(() => {
-    console.log("Data Source has been initialized!");
-    console.log(process.env.DATABASE_HOST_API);
+    // console.log("Data Source has been initialized!");
+    // console.log(process.env.DATABASE_HOST_API);
     
   })
   .catch((err) => {
