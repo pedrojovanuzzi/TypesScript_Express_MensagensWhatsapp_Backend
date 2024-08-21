@@ -19,10 +19,10 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-cron.schedule('*/50 * * * * *', () => {
-    console.log('running a task every minute');
-    emailController.DiasAntes15();
-});
+// cron.schedule('*/50 * * * * *', () => {
+//     console.log('running a task every minute');
+//     emailController.DiasAntes15();
+// });
 
 const transporter = nodemailer.createTransport({
     host: 'smtp-mail.outlook.com',
