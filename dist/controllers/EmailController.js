@@ -198,10 +198,7 @@ class EmailController {
         };
         logs.push(newLog);
         // Salvar os logs de volta no arquivo
-        fs_1.default.writeFile(logFilePath, JSON.stringify(logs, null, 2), (err) => {
-            if (err)
-                console.error("Erro ao salvar os logs:", err);
-        });
+        fs_1.default.writeFileSync(logFilePath, JSON.stringify(logs, null, 2));
     }
 }
 const emailController = new EmailController();
