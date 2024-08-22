@@ -59,6 +59,7 @@ class EmailController {
     }
     async DiasAntes5() {
         const date = new Date();
+        const anoAtual = date.getFullYear(); // Obtém o ano atual
         const MesDeHoje = date.getMonth() + 1; // getMonth retorna de 0 a 11, então adicionamos 1
         const diaHoje = date.getDate(); // getDate retorna o dia do mês
         const diaVencimento = diaHoje + 5;
@@ -68,7 +69,7 @@ class EmailController {
         const clientes = await resultados.find({
             //Alias representa o resultado da data da coluna
             where: {
-                datavenc: (0, typeorm_1.Raw)(alias => `(MONTH(${alias}) = ${MesDeHoje} AND DAY(${alias}) = ${diaVencimento})`),
+                datavenc: (0, typeorm_1.Raw)(alias => `(YEAR(${alias}) = ${anoAtual} AND MONTH(${alias}) = ${MesDeHoje} AND DAY(${alias}) = ${diaVencimento})`),
                 datadel: (0, typeorm_1.Raw)(alias => `${alias} IS NULL`),
                 status: (0, typeorm_1.Raw)(alias => `${alias} != 'pago'`)
             },
@@ -85,7 +86,7 @@ class EmailController {
                 const formattedDate = dateString.split(' ')[0].split('-').reverse().join('/');
                 const pppoe = client.login;
                 const clientes = ds_1.AppDataSource.getRepository(User_1.User);
-                const email = await clientes.findOne({ where: { login: pppoe } });
+                const email = await clientes.findOne({ where: { login: pppoe, cli_ativado: "s" } });
                 const html_msg = this.msg(msg, formattedDate, pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero);
                 if (email?.email) {
                     const mailOptions = {
@@ -118,6 +119,7 @@ class EmailController {
     }
     async DiasDoVencimento() {
         const date = new Date();
+        const anoAtual = date.getFullYear(); // Obtém o ano atual
         const MesDeHoje = date.getMonth() + 1; // getMonth retorna de 0 a 11, então adicionamos 1
         const diaHoje = date.getDate(); // getDate retorna o dia do mês
         const diaVencimento = diaHoje;
@@ -127,7 +129,7 @@ class EmailController {
         const clientes = await resultados.find({
             //Alias representa o resultado da data da coluna
             where: {
-                datavenc: (0, typeorm_1.Raw)(alias => `(MONTH(${alias}) = ${MesDeHoje} AND DAY(${alias}) = ${diaVencimento})`),
+                datavenc: (0, typeorm_1.Raw)(alias => `(YEAR(${alias}) = ${anoAtual} AND MONTH(${alias}) = ${MesDeHoje} AND DAY(${alias}) = ${diaVencimento})`),
                 datadel: (0, typeorm_1.Raw)(alias => `${alias} IS NULL`),
                 status: (0, typeorm_1.Raw)(alias => `${alias} != 'pago'`)
             },
@@ -144,7 +146,7 @@ class EmailController {
                 const formattedDate = dateString.split(' ')[0].split('-').reverse().join('/');
                 const pppoe = client.login;
                 const clientes = ds_1.AppDataSource.getRepository(User_1.User);
-                const email = await clientes.findOne({ where: { login: pppoe } });
+                const email = await clientes.findOne({ where: { login: pppoe, cli_ativado: "s" } });
                 const html_msg = this.msg(msg, formattedDate, pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero);
                 if (email?.email) {
                     const mailOptions = {
