@@ -16,9 +16,12 @@ const fs_1 = __importDefault(require("fs"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-node_cron_1.default.schedule('53 10 * * *', () => {
-    console.log('RUNNING CRONTAB');
+node_cron_1.default.schedule('0 1 * * *', () => {
+    console.log('RUNNING CRONTAB BEFORE 5 DAYS');
     emailController.DiasAntes5();
+});
+node_cron_1.default.schedule('0 4 * * *', () => {
+    console.log('RUNNING CRONTAB THE DAY');
     emailController.DiasDoVencimento();
 });
 const transporter = nodemailer_1.default.createTransport({
@@ -73,7 +76,7 @@ class EmailController {
                 datadel: (0, typeorm_1.Raw)(alias => `${alias} IS NULL`),
                 status: (0, typeorm_1.Raw)(alias => `${alias} != 'pago'`)
             },
-            take: 1
+            take: 10
         });
         // console.log(clientes);
         clientes.map(async (client) => {
@@ -133,7 +136,7 @@ class EmailController {
                 datadel: (0, typeorm_1.Raw)(alias => `${alias} IS NULL`),
                 status: (0, typeorm_1.Raw)(alias => `${alias} != 'pago'`)
             },
-            take: 1
+            take: 10
         });
         // console.log(clientes);
         clientes.map(async (client) => {

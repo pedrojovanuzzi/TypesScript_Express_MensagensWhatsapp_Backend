@@ -75,7 +75,7 @@ class MensagensController {
                     const number = Number("55" + client.celular.replace(/[^\d]/g, ''));
                     console.log(number);
                     await wa.messages.template(test, number).then((res) => {
-                        console.log(res.rawResponse());
+                        // console.log( res.rawResponse() );
                     });
                 }
                 catch (e) {
@@ -111,7 +111,7 @@ class MensagensController {
                     const number = Number("55" + client.celular.replace(/[^\d]/g, ''));
                     console.log(number);
                     await wa.messages.template(test, number).then((res) => {
-                        console.log(res.rawResponse());
+                        // console.log( res.rawResponse() );
                     });
                 }
                 catch (e) {
@@ -160,7 +160,7 @@ class MensagensController {
                                 parameters: [
                                     {
                                         type: "text" /* ParametersTypesEnum.Text */,
-                                        text: String(msg),
+                                        text: String(msg)
                                     }
                                 ],
                             }
@@ -169,7 +169,7 @@ class MensagensController {
                     const number = Number("55" + client.celular.replace(/[^\d]/g, ''));
                     console.log(number);
                     await wa.messages.template(test, number).then((res) => {
-                        console.log(res.rawResponse());
+                        // console.log( res.rawResponse() );
                     });
                 }
                 catch (e) {

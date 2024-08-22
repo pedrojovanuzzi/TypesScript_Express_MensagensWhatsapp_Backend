@@ -19,9 +19,12 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-cron.schedule('53 10 * * *', () => {
-    console.log('RUNNING CRONTAB');
+cron.schedule('0 1 * * *', () => {
+    console.log('RUNNING CRONTAB BEFORE 5 DAYS');
     emailController.DiasAntes5();
+});
+cron.schedule('0 4 * * *', () => {
+    console.log('RUNNING CRONTAB THE DAY');
     emailController.DiasDoVencimento();
 });
 
@@ -89,7 +92,7 @@ class EmailController {
                 datadel: Raw(alias => `${alias} IS NULL`),
                 status: Raw(alias => `${alias} != 'pago'`)
             },
-            take: 1
+            take: 10
         });
         // console.log(clientes);
 
@@ -169,7 +172,7 @@ class EmailController {
                 datadel: Raw(alias => `${alias} IS NULL`),
                 status: Raw(alias => `${alias} != 'pago'`)
             },
-            take: 1
+            take: 10
         });
         // console.log(clientes);
 
