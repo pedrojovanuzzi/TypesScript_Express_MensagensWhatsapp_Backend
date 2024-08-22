@@ -100,7 +100,7 @@ class MensagensController{
         
                 await wa.messages.template( test, number ).then( ( res ) =>
                     {
-                        console.log( res.rawResponse() );
+                        // console.log( res.rawResponse() );
                     } );
                 
             }
@@ -152,7 +152,7 @@ class MensagensController{
             
                     await wa.messages.template( test, number ).then( ( res ) =>
                         {
-                            console.log( res.rawResponse() );
+                            // console.log( res.rawResponse() );
                         } );
                     
                 }
@@ -215,7 +215,7 @@ class MensagensController{
                             parameters: [
                                 {
                                     type: ParametersTypesEnum.Text,
-                                    text: String(msg),
+                                    text: String(msg)
                                 }
                             ],
                         }
@@ -229,7 +229,7 @@ class MensagensController{
         
                 await wa.messages.template( test, number ).then( ( res ) =>
                     {
-                        console.log( res.rawResponse() );
+                        // console.log( res.rawResponse() );
                     } );
                 
             }
