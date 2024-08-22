@@ -48,7 +48,7 @@ class MensagensController{
         console.log(UppercaseBairro);
         
 
-        const clientes = await resultados.find({take: 250, where: {bairro: UppercaseBairro}});
+        const clientes = await resultados.find({where: {bairro: UppercaseBairro, cli_ativado: "s"}});
 
         // console.log(clientes);
         
@@ -127,7 +127,7 @@ class MensagensController{
         else{
             const resultados = AppDataSource.getRepository(User);
 
-            const clientes = await resultados.find({take: 250});
+            const clientes = await resultados.find({where: {cli_ativado: "s"}});
 
             if(!clientes){
                 console.log("Sem Clientes");

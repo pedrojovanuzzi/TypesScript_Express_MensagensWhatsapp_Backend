@@ -33,7 +33,7 @@ class MensagensController {
                 res.send("Error Bairro not String");
             }
             console.log(UppercaseBairro);
-            const clientes = await resultados.find({ take: 250, where: { bairro: UppercaseBairro } });
+            const clientes = await resultados.find({ where: { bairro: UppercaseBairro, cli_ativado: "s" } });
             // console.log(clientes);
             if (!clientes) {
                 console.log("Sem Clientes");
@@ -94,7 +94,7 @@ class MensagensController {
         }
         else {
             const resultados = ds_1.AppDataSource.getRepository(User_1.User);
-            const clientes = await resultados.find({ take: 250 });
+            const clientes = await resultados.find({ where: { cli_ativado: "s" } });
             if (!clientes) {
                 console.log("Sem Clientes");
                 res.send("Sem Clientes");
