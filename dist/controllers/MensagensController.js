@@ -121,5 +121,63 @@ class MensagensController {
             });
         }
     }
+    async MensagensPON(req, res) {
+        const { titulo, msg, pon } = req.query;
+        const { password } = req.body;
+        console.log(req.query);
+        if (password != API_PASSWORD) {
+            console.log("Senha Incorreta");
+            res.sendStatus(400);
+        }
+        else {
+            const resultados = ds_1.AppDataSource.getRepository(User_1.User);
+            const clientes = await resultados.find({ where: { porta_olt: String(pon), cli_ativado: "s" } });
+            // console.log(clientes);
+            if (!clientes) {
+                console.log("Sem Clientes");
+                res.send("Sem Clientes");
+            }
+            clientes.map(async (client) => {
+                try {
+                    const test = {
+                        name: "aviso_pon",
+                        language: {
+                            code: "pt_BR" /* LanguagesEnum.Portuguese_BR */,
+                            policy: 'deterministic'
+                        },
+                        components: [
+                            {
+                                type: "header" /* ComponentTypesEnum.Header */,
+                                parameters: [
+                                    {
+                                        type: "text" /* ParametersTypesEnum.Text */,
+                                        text: String(titulo)
+                                    }
+                                ]
+                            },
+                            {
+                                type: "body" /* ComponentTypesEnum.Body */,
+                                parameters: [
+                                    {
+                                        type: "text" /* ParametersTypesEnum.Text */,
+                                        text: String(msg),
+                                    }
+                                ],
+                            }
+                        ],
+                    };
+                    const number = Number("55" + client.celular.replace(/[^\d]/g, ''));
+                    console.log(number);
+                    await wa.messages.template(test, number).then((res) => {
+                        console.log(res.rawResponse());
+                    });
+                }
+                catch (e) {
+                    console.log(JSON.stringify(e));
+                }
+                res.sendStatus(200);
+            });
+        }
+    }
 }
 exports.default = new MensagensController();

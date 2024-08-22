@@ -167,6 +167,82 @@ class MensagensController{
 
     }
 
+    async MensagensPON(req : Request, res : Response){
+        const {titulo, msg, pon} = req.query;
+        const {password} = req.body;
+
+        console.log(req.query);
+        
+        if(password != API_PASSWORD){
+            console.log("Senha Incorreta");
+            res.sendStatus(400);
+            
+        }
+        else{
+        const resultados = AppDataSource.getRepository(User);
+
+        const clientes = await resultados.find({where: {porta_olt: String(pon), cli_ativado: "s"}});
+
+        // console.log(clientes);
+        
+
+        if(!clientes){
+            console.log("Sem Clientes");
+            res.send("Sem Clientes")
+        }
+
+        clientes.map(async (client : any) => {
+            try{
+
+                const test: MessageTemplateObject<ComponentTypesEnum> = {
+                    name: "aviso_pon",
+                    language: {
+                        code: LanguagesEnum.Portuguese_BR,
+                        policy: 'deterministic'
+                    },
+                    components: [
+                        {
+                            type: ComponentTypesEnum.Header,
+                            parameters: [
+                                {
+                                    type: ParametersTypesEnum.Text,
+                                    text: String(titulo)
+                                }
+                            ]
+                        },
+                        {
+                            type: ComponentTypesEnum.Body,
+                            parameters: [
+                                {
+                                    type: ParametersTypesEnum.Text,
+                                    text: String(msg),
+                                }
+                            ],
+                        }
+                    ],
+                };
+
+                const number = Number("55" + client.celular.replace(/[^\d]/g, ''));
+
+                console.log(number);
+                
+        
+                await wa.messages.template( test, number ).then( ( res ) =>
+                    {
+                        console.log( res.rawResponse() );
+                    } );
+                
+            }
+            catch( e )
+            {
+                console.log( JSON.stringify( e ) );
+            }
+            res.sendStatus(200);
+        }) 
+        }
+        
+    }
+
 }
 
 export default new MensagensController();
