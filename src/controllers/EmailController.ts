@@ -19,7 +19,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-cron.schedule('* * * * *', () => {
+cron.schedule('*/20 * * * * *', () => {
     console.log('running a task every minute');
     emailController.DiasAntes5();
     emailController.DiasDoVencimento();
@@ -114,7 +114,7 @@ class EmailController {
             const html_msg = this.msg(msg,formattedDate,pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero);
 
 
-            if(email){
+            if(email?.email){
                 const mailOptions = {
                     from: process.env.EMAIL,
                     to: String(email.email),
@@ -134,6 +134,7 @@ class EmailController {
             }
             else{
                 console.log("Sem Email Cadastrado");
+                this.logError("Sem Email Cadastrado", "Email", client);
             }
             } catch (error) {
                 console.log(error);
@@ -190,40 +191,39 @@ class EmailController {
 
             const html_msg = this.msg(msg,formattedDate,pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero);
 
-            if(email){
+            if(email?.email){
                 const mailOptions = {
                     from: process.env.EMAIL,
-                    to: String(email.email),
+                    to: String(email?.email),
                     subject: `Sua Fatura Vence Hoje ${pppoe.toUpperCase()}`,
                     html: html_msg,
                 };
                 // console.log(msg);
 
                 console.log(mailOptions);
+                
 
                 try {
                     await transporter.sendMail(mailOptions);         
                 } catch (error) {
-                    console.log(error);
-                    this.logError(error, email.email, client);
+                    // console.log(error);
+                    this.logError(error, email?.email, client);
                 }
             }
             else{
                 console.log("Sem Email Cadastrado");
+                this.logError("Sem Email Cadastrado", "Email", client);
             }
             } catch (error) {
-                console.log(error);
+                // console.log(error);
                 this.logError(error, "N/A", client);
-            }
-
-            
-            
+            }       
         })
         console.log("Finalizado");
     }
 
     logError(error: any, email: string, cliente: any) {
-        const logFilePath = path.join(__dirname, '../logs/EmailLogs.json');
+        const logFilePath = path.join(__dirname, '../../logs/EmailLogs.json');
     
         // Verificar se o arquivo existe e não está vazio
         let logs = [];
@@ -249,7 +249,9 @@ class EmailController {
         logs.push(newLog);
     
         // Salvar os logs de volta no arquivo
-        fs.writeFileSync(logFilePath, JSON.stringify(logs, null, 2));
+        fs.writeFile(logFilePath, JSON.stringify(logs, null, 2), (err) => {
+            if (err) console.error("Erro ao salvar os logs:", err);
+        });
     }
 
 }
