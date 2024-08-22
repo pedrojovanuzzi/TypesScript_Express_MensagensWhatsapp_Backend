@@ -82,12 +82,12 @@ class MensagensController{
                             parameters: [
                                 {
                                     type: ParametersTypesEnum.Text,
-                                    text: UppercaseBairro,
+                                    text: String(msg),
                                 },
                                 {
                                     type: ParametersTypesEnum.Text,
-                                    text: String(msg),
-                                }
+                                    text: UppercaseBairro,
+                                },
                             ],
                         }
                     ],
