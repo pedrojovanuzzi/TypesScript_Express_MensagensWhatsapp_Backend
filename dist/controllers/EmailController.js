@@ -16,8 +16,8 @@ const fs_1 = __importDefault(require("fs"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-node_cron_1.default.schedule('*/20 * * * * *', () => {
-    console.log('running a task every minute');
+node_cron_1.default.schedule('40 10 * * *', () => {
+    console.log('RUNNING CRONTAB');
     emailController.DiasAntes5();
     emailController.DiasDoVencimento();
 });
@@ -71,7 +71,8 @@ class EmailController {
                 datavenc: (0, typeorm_1.Raw)(alias => `(MONTH(${alias}) = ${MesDeHoje} AND DAY(${alias}) = ${diaVencimento})`),
                 datadel: (0, typeorm_1.Raw)(alias => `${alias} IS NULL`),
                 status: (0, typeorm_1.Raw)(alias => `${alias} != 'pago'`)
-            }
+            },
+            take: 1
         });
         // console.log(clientes);
         clientes.map(async (client) => {
@@ -129,7 +130,8 @@ class EmailController {
                 datavenc: (0, typeorm_1.Raw)(alias => `(MONTH(${alias}) = ${MesDeHoje} AND DAY(${alias}) = ${diaVencimento})`),
                 datadel: (0, typeorm_1.Raw)(alias => `${alias} IS NULL`),
                 status: (0, typeorm_1.Raw)(alias => `${alias} != 'pago'`)
-            }
+            },
+            take: 1
         });
         // console.log(clientes);
         clientes.map(async (client) => {

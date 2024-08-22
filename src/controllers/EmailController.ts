@@ -19,8 +19,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-cron.schedule('*/20 * * * * *', () => {
-    console.log('running a task every minute');
+cron.schedule('40 10 * * *', () => {
+    console.log('RUNNING CRONTAB');
     emailController.DiasAntes5();
     emailController.DiasDoVencimento();
 });
@@ -87,7 +87,8 @@ class EmailController {
                 datavenc: Raw(alias => `(MONTH(${alias}) = ${MesDeHoje} AND DAY(${alias}) = ${diaVencimento})`),
                 datadel: Raw(alias => `${alias} IS NULL`),
                 status: Raw(alias => `${alias} != 'pago'`)
-            }
+            },
+            take: 1
         });
         // console.log(clientes);
 
@@ -165,7 +166,8 @@ class EmailController {
                 datavenc: Raw(alias => `(MONTH(${alias}) = ${MesDeHoje} AND DAY(${alias}) = ${diaVencimento})`),
                 datadel: Raw(alias => `${alias} IS NULL`),
                 status: Raw(alias => `${alias} != 'pago'`)
-            }
+            },
+            take: 1
         });
         // console.log(clientes);
 
