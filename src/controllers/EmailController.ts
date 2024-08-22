@@ -19,7 +19,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-cron.schedule('50 10 * * *', () => {
+cron.schedule('53 10 * * *', () => {
     console.log('RUNNING CRONTAB');
     emailController.DiasAntes5();
     emailController.DiasDoVencimento();

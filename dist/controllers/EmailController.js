@@ -16,7 +16,7 @@ const fs_1 = __importDefault(require("fs"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-node_cron_1.default.schedule('50 10 * * *', () => {
+node_cron_1.default.schedule('53 10 * * *', () => {
     console.log('RUNNING CRONTAB');
     emailController.DiasAntes5();
     emailController.DiasDoVencimento();
