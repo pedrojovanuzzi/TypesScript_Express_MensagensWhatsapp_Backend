@@ -3,8 +3,6 @@ import { Request, Response } from "express";
 import { Record } from "../entities/Record";
 import { Pix } from "../entities/Pix";
 import { User } from "../entities/User";
-import { AppDataSourceBoleto } from "../database/ds2";
-import { AppDataSourcePix } from "../database/ds3";
 import { AppDataSource } from "../database/ds";
 import { format, getDay, getMonth } from "date-fns";
 import { Raw } from "typeorm";
@@ -84,7 +82,7 @@ class EmailController {
         console.log(diaHoje);
         
 
-        const resultados = AppDataSourceBoleto.getRepository(Record);
+        const resultados = AppDataSource.getRepository(Record);
         const clientes = await resultados.find({
             //Alias representa o resultado da data da coluna
             where: {
@@ -102,7 +100,7 @@ class EmailController {
             
             const idBoleto = client.uuid_lanc; 
             
-            const pix_resultados = AppDataSourcePix.getRepository(Pix);
+            const pix_resultados = AppDataSource.getRepository(Pix);
             const pix = await pix_resultados.findOne({where: {titulo: idBoleto}});
             
 
@@ -164,7 +162,7 @@ class EmailController {
         console.log(diaHoje);
         
 
-        const resultados = AppDataSourceBoleto.getRepository(Record);
+        const resultados = AppDataSource.getRepository(Record);
         const clientes = await resultados.find({
             //Alias representa o resultado da data da coluna
             where: {
@@ -183,7 +181,7 @@ class EmailController {
             
             const idBoleto = client.uuid_lanc; 
             
-            const pix_resultados = AppDataSourcePix.getRepository(Pix);
+            const pix_resultados = AppDataSource.getRepository(Pix);
             const pix = await pix_resultados.findOne({where: {titulo: idBoleto}});
             
 

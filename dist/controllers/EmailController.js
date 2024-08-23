@@ -7,8 +7,6 @@ const node_cron_1 = __importDefault(require("node-cron"));
 const Record_1 = require("../entities/Record");
 const Pix_1 = require("../entities/Pix");
 const User_1 = require("../entities/User");
-const ds2_1 = require("../database/ds2");
-const ds3_1 = require("../database/ds3");
 const ds_1 = require("../database/ds");
 const typeorm_1 = require("typeorm");
 const path_1 = __importDefault(require("path"));
@@ -68,7 +66,7 @@ class EmailController {
         const diaVencimento = diaHoje + 5;
         console.log(MesDeHoje);
         console.log(diaHoje);
-        const resultados = ds2_1.AppDataSourceBoleto.getRepository(Record_1.Record);
+        const resultados = ds_1.AppDataSource.getRepository(Record_1.Record);
         const clientes = await resultados.find({
             //Alias representa o resultado da data da coluna
             where: {
@@ -83,7 +81,7 @@ class EmailController {
             try {
                 let msg = "";
                 const idBoleto = client.uuid_lanc;
-                const pix_resultados = ds3_1.AppDataSourcePix.getRepository(Pix_1.Pix);
+                const pix_resultados = ds_1.AppDataSource.getRepository(Pix_1.Pix);
                 const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
                 const dateString = client.datavenc;
                 const formattedDate = dateString.split(' ')[0].split('-').reverse().join('/');
@@ -128,7 +126,7 @@ class EmailController {
         const diaVencimento = diaHoje;
         console.log(MesDeHoje);
         console.log(diaHoje);
-        const resultados = ds2_1.AppDataSourceBoleto.getRepository(Record_1.Record);
+        const resultados = ds_1.AppDataSource.getRepository(Record_1.Record);
         const clientes = await resultados.find({
             //Alias representa o resultado da data da coluna
             where: {
@@ -143,7 +141,7 @@ class EmailController {
             try {
                 let msg = "";
                 const idBoleto = client.uuid_lanc;
-                const pix_resultados = ds3_1.AppDataSourcePix.getRepository(Pix_1.Pix);
+                const pix_resultados = ds_1.AppDataSource.getRepository(Pix_1.Pix);
                 const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
                 const dateString = client.datavenc;
                 const formattedDate = dateString.split(' ')[0].split('-').reverse().join('/');
