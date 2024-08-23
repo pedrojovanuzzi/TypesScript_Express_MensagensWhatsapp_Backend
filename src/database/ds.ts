@@ -14,7 +14,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DATABASE_API,
   entities: [User],
   synchronize: false,
-});fefefefefe
+});
 
 AppDataSource.initialize()
   .then(() => {
