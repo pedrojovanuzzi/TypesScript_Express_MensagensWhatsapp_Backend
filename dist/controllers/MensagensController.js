@@ -81,9 +81,9 @@ class MensagensController {
                 catch (e) {
                     console.log(JSON.stringify(e));
                 }
-                res.sendStatus(200);
             });
         }
+        res.sendStatus(200);
     }
     async MensagemConhecerBot(req, res) {
         const { password } = req.body;
@@ -117,9 +117,9 @@ class MensagensController {
                 catch (e) {
                     console.log(JSON.stringify(e));
                 }
-                res.sendStatus(200);
             });
         }
+        res.sendStatus(200);
     }
     async MensagensPON(req, res) {
         const { titulo, msg, pon } = req.query;
@@ -175,9 +175,9 @@ class MensagensController {
                 catch (e) {
                     console.log(JSON.stringify(e));
                 }
-                res.sendStatus(200);
             });
         }
+        res.sendStatus(200);
     }
 }
 exports.default = new MensagensController();

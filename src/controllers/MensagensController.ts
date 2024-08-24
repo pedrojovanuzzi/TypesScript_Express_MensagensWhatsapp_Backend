@@ -108,10 +108,10 @@ class MensagensController{
             {
                 console.log( JSON.stringify( e ) );
             }
-            res.sendStatus(200);
+            
         }) 
         }
-        
+        res.sendStatus(200);
     }
 
     async MensagemConhecerBot(req : Request, res : Response){
@@ -160,11 +160,12 @@ class MensagensController{
                 {
                     console.log( JSON.stringify( e ) );
                 }
-                res.sendStatus(200);
+                
             }) 
 
         }
 
+        res.sendStatus(200);
     }
 
     async MensagensPON(req : Request, res : Response){
@@ -237,10 +238,10 @@ class MensagensController{
             {
                 console.log( JSON.stringify( e ) );
             }
-            res.sendStatus(200);
+            
         }) 
         }
-        
+        res.sendStatus(200);
     }
 
 }
