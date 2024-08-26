@@ -89,8 +89,7 @@ class EmailController {
                 datavenc: Raw(alias => `(YEAR(${alias}) = ${anoAtual} AND MONTH(${alias}) = ${MesDeHoje} AND DAY(${alias}) = ${diaVencimento})`),
                 datadel: Raw(alias => `${alias} IS NULL`),
                 status: Raw(alias => `${alias} != 'pago'`)
-            },
-            take: 10
+            }
         });
         // console.log(clientes);
 
@@ -169,8 +168,7 @@ class EmailController {
                 datavenc: Raw(alias => `(YEAR(${alias}) = ${anoAtual} AND MONTH(${alias}) = ${MesDeHoje} AND DAY(${alias}) = ${diaVencimento})`),
                 datadel: Raw(alias => `${alias} IS NULL`),
                 status: Raw(alias => `${alias} != 'pago'`)
-            },
-            take: 10
+            }
         });
         // console.log(clientes);
 

@@ -73,8 +73,7 @@ class EmailController {
                 datavenc: (0, typeorm_1.Raw)(alias => `(YEAR(${alias}) = ${anoAtual} AND MONTH(${alias}) = ${MesDeHoje} AND DAY(${alias}) = ${diaVencimento})`),
                 datadel: (0, typeorm_1.Raw)(alias => `${alias} IS NULL`),
                 status: (0, typeorm_1.Raw)(alias => `${alias} != 'pago'`)
-            },
-            take: 10
+            }
         });
         // console.log(clientes);
         clientes.map(async (client) => {
@@ -133,8 +132,7 @@ class EmailController {
                 datavenc: (0, typeorm_1.Raw)(alias => `(YEAR(${alias}) = ${anoAtual} AND MONTH(${alias}) = ${MesDeHoje} AND DAY(${alias}) = ${diaVencimento})`),
                 datadel: (0, typeorm_1.Raw)(alias => `${alias} IS NULL`),
                 status: (0, typeorm_1.Raw)(alias => `${alias} != 'pago'`)
-            },
-            take: 10
+            }
         });
         // console.log(clientes);
         clientes.map(async (client) => {
