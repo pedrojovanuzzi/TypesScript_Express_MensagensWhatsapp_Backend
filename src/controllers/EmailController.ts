@@ -27,7 +27,7 @@ dotenv.config();
 //     emailController.DiasDoVencimento();
 // });
 
-cron.schedule('* * * * * *', () => {
+cron.schedule('*/1 * * * *', () => {
     console.log('RUNNING CRONTAB TEST');
     emailController.TesteEmail();
 })
@@ -117,70 +117,70 @@ class EmailController {
         });
         console.log(clientes);
     
-        // clientes.map(async (client: any) => {
-        //     try {
-        //         let msg = "";
+        clientes.map(async (client: any) => {
+            try {
+                let msg = "";
     
-        //         const idBoleto = client.uuid_lanc;
+                const idBoleto = client.uuid_lanc;
     
-        //         const pix_resultados = AppDataSource.getRepository(Pix);
-        //         const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
+                const pix_resultados = AppDataSource.getRepository(Pix);
+                const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
     
-        //         const dateString = client.datavenc;
-        //         const formattedDate = dateString.split(' ')[0].split('-').reverse().join('/');
+                const dateString = client.datavenc;
+                const formattedDate = dateString.split(' ')[0].split('-').reverse().join('/');
     
-        //         const pppoe = client.login;
+                const pppoe = client.login;
     
-        //         const clientesRepo = AppDataSource.getRepository(User);
-        //         const email = await clientesRepo.findOne({ where: { login: pppoe, cli_ativado: "s" } });
+                const clientesRepo = AppDataSource.getRepository(User);
+                const email = await clientesRepo.findOne({ where: { login: pppoe, cli_ativado: "s" } });
     
-        //         const html_msg = this.msg(msg, formattedDate, pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero);
+                const html_msg = this.msg(msg, formattedDate, pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero);
     
-        //         // Caminho do PDF remoto no servidor FTP
-        //         const ftpHost = String(process.env.DATABASE_HOST_API);
-        //         const ftpUser = String(process.env.DATABASE_USERNAME_API); // ajuste com suas credenciais
-        //         const ftpPassword = String(process.env.DATABASE_PASSWORD_API); // ajuste com suas credenciais
-        //         const remotePdfPath = `${pdfPath}${idBoleto}.pdf`; // ajustado para o ID do cliente
-        //         const localPdfPath = path.join(__dirname, ".." , "..", 'temp', `${idBoleto}.pdf`); // Caminho local temporário para salvar o PDF
+                // Caminho do PDF remoto no servidor FTP
+                const ftpHost = String(process.env.DATABASE_HOST_API);
+                const ftpUser = String(process.env.DATABASE_USERNAME_API); // ajuste com suas credenciais
+                const ftpPassword = String(process.env.DATABASE_PASSWORD_API); // ajuste com suas credenciais
+                const remotePdfPath = `${pdfPath}${idBoleto}.pdf`; // ajustado para o ID do cliente
+                const localPdfPath = path.join(__dirname, ".." , "..", 'temp', `${idBoleto}.pdf`); // Caminho local temporário para salvar o PDF
     
-        //         // Baixar o PDF do servidor FTP antes de enviar o e-mail
-        //         await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
+                // Baixar o PDF do servidor FTP antes de enviar o e-mail
+                await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
     
-        //         if (email?.email) {
-        //             const mailOptions = {
-        //                 from: process.env.EMAIL,
-        //                 to: String(email.email),
-        //                 subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
-        //                 html: html_msg,
-        //                 attachments: [
-        //                     {
-        //                         filename: 'documento.pdf',
-        //                         path: localPdfPath // Especifica o caminho local do PDF baixado
-        //                     }
-        //                 ]
-        //             };
+                if (email?.email) {
+                    const mailOptions = {
+                        from: process.env.EMAIL,
+                        to: String(email.email),
+                        subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
+                        html: html_msg,
+                        attachments: [
+                            {
+                                filename: 'documento.pdf',
+                                path: localPdfPath // Especifica o caminho local do PDF baixado
+                            }
+                        ]
+                    };
     
-        //             console.log(mailOptions);
+                    console.log(mailOptions);
     
-        //             try {
-        //                 await transporter.sendMail(mailOptions);
-        //                 console.log("E-mail enviado com sucesso!");
-        //             } catch (error) {
-        //                 console.log(error);
-        //                 this.logError(error, email.email, client);
-        //             }
+                    try {
+                        await transporter.sendMail(mailOptions);
+                        console.log("E-mail enviado com sucesso!");
+                    } catch (error) {
+                        console.log(error);
+                        this.logError(error, email.email, client);
+                    }
     
-        //             // Após enviar o e-mail, deletar o arquivo local temporário
-        //             fs.unlinkSync(localPdfPath);
-        //         } else {
-        //             console.log("Sem Email Cadastrado");
-        //             this.logError("Sem Email Cadastrado", "Email", client);
-        //         }
-        //     } catch (error) {
-        //         console.log(error);
-        //         this.logError(error, "N/A", client);
-        //     }
-        // });
+                    // Após enviar o e-mail, deletar o arquivo local temporário
+                    fs.unlinkSync(localPdfPath);
+                } else {
+                    console.log("Sem Email Cadastrado");
+                    this.logError("Sem Email Cadastrado", "Email", client);
+                }
+            } catch (error) {
+                console.log(error);
+                this.logError(error, "N/A", client);
+            }
+        });
     
         console.log("Finalizado");
     }
