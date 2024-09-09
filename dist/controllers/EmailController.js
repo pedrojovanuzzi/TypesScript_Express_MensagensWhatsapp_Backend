@@ -12,16 +12,22 @@ const typeorm_1 = require("typeorm");
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
+const basic_ftp_1 = require("basic-ftp");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-node_cron_1.default.schedule('0 1 * * *', () => {
-    console.log('RUNNING CRONTAB BEFORE 5 DAYS');
-    emailController.DiasAntes5();
+// cron.schedule('0 1 * * *', () => {
+//     console.log('RUNNING CRONTAB BEFORE 5 DAYS');
+//     emailController.DiasAntes5();
+// });
+// cron.schedule('0 4 * * *', () => {
+//     console.log('RUNNING CRONTAB THE DAY');
+//     emailController.DiasDoVencimento();
+// });
+node_cron_1.default.schedule('* * * * * *', () => {
+    console.log('RUNNING CRONTAB TEST');
+    emailController.TesteEmail();
 });
-node_cron_1.default.schedule('0 4 * * *', () => {
-    console.log('RUNNING CRONTAB THE DAY');
-    emailController.DiasDoVencimento();
-});
+const pdfPath = '/opt/mk-auth/print_pdf/boletos/'; // Caminho do arquivo no sistema de arquivos
 const transporter = nodemailer_1.default.createTransport({
     host: 'smtp-mail.outlook.com',
     port: 587, // Porta SMTP para envio de e-mails
@@ -57,6 +63,96 @@ class EmailController {
         msg += `<p>Agradecemos sua preferência!</p>`;
         msg += `<p style="color: red;"><strong>ATENÇÃO: CASO JÁ TENHA PAGO/AGENDADO, DESCONSIDERE ESTE E-MAIL!</strong></p>`;
         return msg;
+    }
+    async downloadPdfFromFtp(host, user, password, remoteFilePath, localFilePath) {
+        const client = new basic_ftp_1.Client();
+        try {
+            await client.access({
+                host,
+                user,
+                password,
+                secure: false // ou true, se o servidor usar FTP seguro
+            });
+            await client.downloadTo(localFilePath, remoteFilePath);
+        }
+        catch (error) {
+            console.error('Erro ao baixar o PDF via FTP: ', error);
+        }
+        finally {
+            client.close();
+        }
+    }
+    async TesteEmail() {
+        const date = new Date();
+        const anoAtual = date.getFullYear(); // Obtém o ano atual
+        const MesDeHoje = date.getMonth() + 1; // getMonth retorna de 0 a 11, então adicionamos 1
+        const diaHoje = date.getDate(); // getDate retorna o dia do mês
+        const diaVencimento = diaHoje + 5;
+        console.log(MesDeHoje);
+        console.log(diaHoje);
+        const resultados = ds_1.AppDataSource.getRepository(Record_1.Record);
+        const clientes = await resultados.find({
+            where: {
+                datavenc: (0, typeorm_1.Raw)(alias => `(YEAR(${alias}) = ${anoAtual} AND MONTH(${alias}) = ${MesDeHoje} AND DAY(${alias}) = ${diaVencimento})`),
+                datadel: (0, typeorm_1.Raw)(alias => `${alias} IS NULL`),
+                status: (0, typeorm_1.Raw)(alias => `${alias} != 'pago'`),
+                login: "PEDROJOVANUZZI"
+            }
+        });
+        console.log(clientes);
+        // clientes.map(async (client: any) => {
+        //     try {
+        //         let msg = "";
+        //         const idBoleto = client.uuid_lanc;
+        //         const pix_resultados = AppDataSource.getRepository(Pix);
+        //         const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
+        //         const dateString = client.datavenc;
+        //         const formattedDate = dateString.split(' ')[0].split('-').reverse().join('/');
+        //         const pppoe = client.login;
+        //         const clientesRepo = AppDataSource.getRepository(User);
+        //         const email = await clientesRepo.findOne({ where: { login: pppoe, cli_ativado: "s" } });
+        //         const html_msg = this.msg(msg, formattedDate, pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero);
+        //         // Caminho do PDF remoto no servidor FTP
+        //         const ftpHost = String(process.env.DATABASE_HOST_API);
+        //         const ftpUser = String(process.env.DATABASE_USERNAME_API); // ajuste com suas credenciais
+        //         const ftpPassword = String(process.env.DATABASE_PASSWORD_API); // ajuste com suas credenciais
+        //         const remotePdfPath = `${pdfPath}${idBoleto}.pdf`; // ajustado para o ID do cliente
+        //         const localPdfPath = path.join(__dirname, ".." , "..", 'temp', `${idBoleto}.pdf`); // Caminho local temporário para salvar o PDF
+        //         // Baixar o PDF do servidor FTP antes de enviar o e-mail
+        //         await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
+        //         if (email?.email) {
+        //             const mailOptions = {
+        //                 from: process.env.EMAIL,
+        //                 to: String(email.email),
+        //                 subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
+        //                 html: html_msg,
+        //                 attachments: [
+        //                     {
+        //                         filename: 'documento.pdf',
+        //                         path: localPdfPath // Especifica o caminho local do PDF baixado
+        //                     }
+        //                 ]
+        //             };
+        //             console.log(mailOptions);
+        //             try {
+        //                 await transporter.sendMail(mailOptions);
+        //                 console.log("E-mail enviado com sucesso!");
+        //             } catch (error) {
+        //                 console.log(error);
+        //                 this.logError(error, email.email, client);
+        //             }
+        //             // Após enviar o e-mail, deletar o arquivo local temporário
+        //             fs.unlinkSync(localPdfPath);
+        //         } else {
+        //             console.log("Sem Email Cadastrado");
+        //             this.logError("Sem Email Cadastrado", "Email", client);
+        //         }
+        //     } catch (error) {
+        //         console.log(error);
+        //         this.logError(error, "N/A", client);
+        //     }
+        // });
+        console.log("Finalizado");
     }
     async DiasAntes5() {
         const date = new Date();
