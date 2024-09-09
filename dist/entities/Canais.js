@@ -17,7 +17,7 @@ exports.Canais = Canais;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
-], Canais.prototype, "id", void 0);
+], Canais.prototype, "idcanal", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 255 }),
     __metadata("design:type", String)

@@ -4,7 +4,7 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 export class Canais {
 
     @PrimaryGeneratedColumn()
-    id!: number;
+    idcanal!: number;
 
     @Column({ type: 'varchar', length: 255})
     canal!: string;
