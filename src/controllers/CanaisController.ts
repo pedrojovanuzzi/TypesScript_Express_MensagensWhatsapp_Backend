@@ -18,10 +18,11 @@ class CanaisController{
                 m3u8Content += `${canal.url}\n`; // URL do canal (ajuste conforme sua estrutura)
             });
     
-            // Define o tipo de resposta como m3u8
+            // Define o cabeçalho para forçar o download como um arquivo m3u8
             res.setHeader('Content-Type', 'application/vnd.apple.mpegurl');
+            res.setHeader('Content-Disposition', 'attachment; filename="playlist.m3u8"');
             
-            // Retorna o conteúdo m3u8 como resposta
+            // Envia o conteúdo m3u8 como um arquivo
             return res.send(m3u8Content);
     
         } catch (error) {
