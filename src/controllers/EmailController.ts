@@ -9,6 +9,7 @@ import { Raw } from "typeorm";
 import path from 'path';
 import fs, { link } from "fs";
 import nodemailer from 'nodemailer';
+import { Client } from 'basic-ftp';
 
 
 
@@ -17,14 +18,17 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-cron.schedule('0 1 * * *', () => {
-    console.log('RUNNING CRONTAB BEFORE 5 DAYS');
-    emailController.DiasAntes5();
-});
-cron.schedule('0 4 * * *', () => {
-    console.log('RUNNING CRONTAB THE DAY');
-    emailController.DiasDoVencimento();
-});
+// cron.schedule('0 1 * * *', () => {
+//     console.log('RUNNING CRONTAB BEFORE 5 DAYS');
+//     emailController.DiasAntes5();
+// });
+// cron.schedule('0 4 * * *', () => {
+//     console.log('RUNNING CRONTAB THE DAY');
+//     emailController.DiasDoVencimento();
+// });
+
+
+
 
 const transporter = nodemailer.createTransport({
     host: 'smtp-mail.outlook.com',
@@ -68,6 +72,103 @@ class EmailController {
         msg += `<p style="color: red;"><strong>ATENÇÃO: CASO JÁ TENHA PAGO/AGENDADO, DESCONSIDERE ESTE E-MAIL!</strong></p>`;
     
         return msg;
+    }
+
+    async downloadPdfFromFtp(host: string, user: string, password: string, remoteFilePath: string, localFilePath: string) {
+        const client = new Client();
+        try {
+          await client.access({
+            host,
+            user,
+            password,
+            secure: false // ou true, se o servidor usar FTP seguro
+          });
+          await client.downloadTo(localFilePath, remoteFilePath);
+        } catch (error) {
+          console.error('Erro ao baixar o PDF via FTP: ', error);
+        } finally {
+          client.close();
+        }
+      }
+
+    async TesteEmail() {
+        const date = new Date();
+        const anoAtual = date.getFullYear(); // Obtém o ano atual
+        const MesDeHoje = date.getMonth() + 1; // getMonth retorna de 0 a 11, então adicionamos 1
+        const diaHoje = date.getDate(); // getDate retorna o dia do mês
+        const diaVencimento = diaHoje + 5;
+        
+
+        console.log(MesDeHoje);
+        console.log(diaHoje);
+        
+
+        const resultados = AppDataSource.getRepository(Record);
+        const clientes = await resultados.find({
+            //Alias representa o resultado da data da coluna
+            where: {
+                datavenc: Raw(alias => `(YEAR(${alias}) = ${anoAtual} AND MONTH(${alias}) = ${MesDeHoje} AND DAY(${alias}) = ${diaVencimento})`),
+                datadel: Raw(alias => `${alias} IS NULL`),
+                status: Raw(alias => `${alias} != 'pago'`),
+                login: "PEDROJOVANUZZI"
+            }
+        });
+        console.log(clientes);
+
+        // clientes.map(async (client : any) => {
+        //     try {
+        //     let msg = "";
+            
+        //     const idBoleto = client.uuid_lanc; 
+            
+        //     const pix_resultados = AppDataSource.getRepository(Pix);
+        //     const pix = await pix_resultados.findOne({where: {titulo: idBoleto}});
+            
+
+        //     const dateString = client.datavenc;
+        //     const formattedDate = dateString.split(' ')[0].split('-').reverse().join('/');
+
+        //     const pppoe = client.login;
+            
+        //     const clientes = AppDataSource.getRepository(User);
+
+        //     const email = await clientes.findOne({where: {login: pppoe , cli_ativado: "s"}});
+            
+
+        //     const html_msg = this.msg(msg,formattedDate,pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero);
+
+
+        //     if(email?.email){
+        //         const mailOptions = {
+        //             from: process.env.EMAIL,
+        //             to: String(email.email),
+        //             subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
+        //             html: html_msg,
+        //         };
+        //         // console.log(msg);
+
+        //         console.log(mailOptions);
+
+        //         try {
+        //             await transporter.sendMail(mailOptions);         
+        //         } catch (error) {
+        //             console.log(error);
+        //             this.logError(error, email.email, client);
+        //         }
+        //     }
+        //     else{
+        //         console.log("Sem Email Cadastrado");
+        //         this.logError("Sem Email Cadastrado", "Email", client);
+        //     }
+        //     } catch (error) {
+        //         console.log(error);
+        //         this.logError(error, "N/A", client);
+        //     }
+
+            
+            
+        // })
+        console.log("Finalizado");
     }
 
     async DiasAntes5() {
