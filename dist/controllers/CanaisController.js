@@ -5,7 +5,7 @@ const Canais_1 = require("../entities/Canais");
 class CanaisController {
     async getCanais(req, res) {
         const RepositoryCanais = ds_canais_1.AppDataSource.getRepository(Canais_1.Canais);
-        const canais = RepositoryCanais.find();
+        const canais = await RepositoryCanais.find();
         return res.json(canais);
     }
 }
