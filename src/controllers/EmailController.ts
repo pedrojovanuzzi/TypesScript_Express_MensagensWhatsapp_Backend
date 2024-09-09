@@ -137,9 +137,9 @@ class EmailController {
                 const html_msg = this.msg(msg, formattedDate, pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero);
     
                 // Caminho do PDF remoto no servidor FTP
-                const ftpHost = String(process.env.DATABASE_HOST_API);
-                const ftpUser = String(process.env.DATABASE_USERNAME_API); // ajuste com suas credenciais
-                const ftpPassword = String(process.env.DATABASE_PASSWORD_API); // ajuste com suas credenciais
+                const ftpHost = String(process.env.HOST_FTP);
+                const ftpUser = String(process.env.USERNAME_FTP); // ajuste com suas credenciais
+                const ftpPassword = String(process.env.PASSWORD_FTP); // ajuste com suas credenciais
                 const remotePdfPath = `${pdfPath}${idBoleto}.pdf`; // ajustado para o ID do cliente
                 const localPdfPath = path.join(__dirname, ".." , "..", 'temp', `${idBoleto}.pdf`); // Caminho local temporário para salvar o PDF
     
