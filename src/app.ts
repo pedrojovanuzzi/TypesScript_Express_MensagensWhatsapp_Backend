@@ -14,8 +14,9 @@ app.use(express.static(path.join(__dirname, '../frontend/build')));
 
 app.use(express.json());
 
+app.use('/canais', canaisrouter);
 app.use('/', router);
 app.use('/email', emailrouter);
-app.use('/canais', canaisrouter);
+
 
 export default app;
