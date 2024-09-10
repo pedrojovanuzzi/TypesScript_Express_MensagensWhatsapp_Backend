@@ -3,18 +3,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const whatsapp_1 = __importDefault(require("whatsapp"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const User_1 = require("../entities/User");
 const ds_1 = require("../database/ds");
 const axios_1 = __importDefault(require("axios"));
 dotenv_1.default.config();
 const waPhonerNumberId = Number(process.env.WA_PHONE_NUMBER_ID);
-const wa = new whatsapp_1.default(waPhonerNumberId);
 const Token = String(process.env.CLOUD_API_ACCESS_TOKEN);
-const was_token_changed = wa.updateAccessToken(Token);
 const API_PASSWORD = process.env.API_PASSWORD;
-const url = `https://graph.facebook.com/v20.0/${process.env.WA_PHONE_NUMBER_ID}/messages`;
+const url = `https://graph.facebook.com/v20.0/${waPhonerNumberId}/messages`;
 class MensagensController {
     async MensagensBairro(req, res) {
         const { msg, bairro } = req.query;

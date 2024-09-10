@@ -12,12 +12,10 @@ import axios from 'axios';
 dotenv.config();
 
 const waPhonerNumberId = Number(process.env.WA_PHONE_NUMBER_ID);
-const wa = new WhatsApp(waPhonerNumberId);
 const Token = String(process.env.CLOUD_API_ACCESS_TOKEN);
-const was_token_changed = wa.updateAccessToken(Token);
 const API_PASSWORD = process.env.API_PASSWORD;
 
-const url = `https://graph.facebook.com/v20.0/${process.env.WA_PHONE_NUMBER_ID}/messages`;
+const url = `https://graph.facebook.com/v20.0/${waPhonerNumberId}/messages`;
 
 
 
