@@ -144,10 +144,6 @@ class EmailController {
                 const remotePdfPath = `${pdfPath}${idBoleto}.pdf`; // ajustado para o ID do cliente
                 const localPdfPath = path.join(__dirname, ".." , "..", 'temp', `${idBoleto}.pdf`); // Caminho local temporário para salvar o PDF
 
-                if (!fs.existsSync(localPdfPath)) {
-                    fs.mkdirSync(localPdfPath, { recursive: true });
-                }
-    
                 // Baixar o PDF do servidor FTP antes de enviar o e-mail
                 await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
     
