@@ -73,11 +73,18 @@ class EmailController {
                 username,
                 password,
             });
-            console.log("Conexão com o servidor SFTP bem-sucedida");
-            await client.fastGet(localFilePath, remoteFilePath);
+            const fileExists = await client.exists(remoteFilePath);
+            if (fileExists) {
+                console.log(`Arquivo encontrado no servidor: ${remoteFilePath}`);
+                await client.fastGet(remoteFilePath, localFilePath);
+                console.log("PDF baixado com sucesso via SFTP");
+            }
+            else {
+                console.error(`Arquivo não encontrado no servidor: ${remoteFilePath}`);
+            }
         }
         catch (error) {
-            console.error('Erro ao baixar o PDF via SFTP: ', error);
+            console.error("Erro ao baixar o PDF via SFTP: ", error);
         }
         finally {
             client.end();
