@@ -89,9 +89,10 @@ class EmailController {
             username,
             password,
           });
+          console.log("Conexão com o servidor SFTP bem-sucedida");
           await client.fastGet(localFilePath, remoteFilePath);
         } catch (error) {
-          console.error('Erro ao baixar o PDF via FTP: ', error);
+          console.error('Erro ao baixar o PDF via SFTP: ', error);
         } finally {
           client.end();
         }
