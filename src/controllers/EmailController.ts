@@ -109,7 +109,7 @@ class EmailController {
         const anoAtual = date.getFullYear(); // Obtém o ano atual
         const MesDeHoje = date.getMonth() + 1; // getMonth retorna de 0 a 11, então adicionamos 1
         const diaHoje = date.getDate(); // getDate retorna o dia do mês
-        const diaVencimento = diaHoje + 5;
+        const diaVencimento = diaHoje;
     
         console.log(MesDeHoje);
         console.log(diaHoje);
@@ -164,7 +164,7 @@ class EmailController {
                         html: html_msg,
                         attachments: [
                             {
-                                filename: 'documento.pdf',
+                                filename: 'Boleto.pdf',
                                 path: localPdfPath // Especifica o caminho local do PDF baixado
                             }
                         ]
