@@ -7,7 +7,7 @@ class CanaisController {
         const RepositoryCanais = ds_canais_1.AppDataSource.getRepository(Canais_1.Canais);
         try {
             // Recupera os canais do banco de dados
-            const canais = await RepositoryCanais.find();
+            const canais = await RepositoryCanais.find({ where: { ativo: "1" } });
             // Gera o conteúdo no formato m3u8
             let m3u8Content = '#EXTM3U\n';
             canais.forEach((canal) => {

@@ -8,7 +8,7 @@ class CanaisController{
     
         try {
             // Recupera os canais do banco de dados
-            const canais = await RepositoryCanais.find();
+            const canais = await RepositoryCanais.find({where: {ativo: "1"}});
     
             // Gera o conteúdo no formato m3u8
             let m3u8Content = '#EXTM3U\n';
