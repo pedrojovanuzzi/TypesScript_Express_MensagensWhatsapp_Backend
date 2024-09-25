@@ -373,7 +373,7 @@ class EmailController {
                 const mailOptions = {
                     from: process.env.EMAIL,
                     to: String(email.email),
-                    subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
+                    subject: `Sua Fatura Vence Hoje ${pppoe.toUpperCase()}`,
                     html: html_msg,
                     attachments: [
                         {
