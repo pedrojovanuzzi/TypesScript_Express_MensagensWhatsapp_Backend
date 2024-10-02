@@ -131,12 +131,12 @@ class EmailController {
                 console.log("RemotePDF: " + remotePdfPath);
                 const localPdfPath = path_1.default.join(__dirname, "..", "..", 'temp', `${idBoleto}.pdf`); // Caminho local temporário para salvar o PDF
                 // Baixar o PDF do servidor FTP antes de enviar o e-mail
-                await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
-                if (email?.email) {
+                const pdfDownload = await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
+                if (email?.email && pdfDownload) {
                     const mailOptions = {
                         from: process.env.EMAIL,
                         to: String(email.email),
-                        subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
+                        subject: `Sua Fatura Vence Hoje ${pppoe.toUpperCase()}`,
                         html: html_msg,
                         attachments: [
                             {
@@ -144,6 +144,23 @@ class EmailController {
                                 path: localPdfPath // Especifica o caminho local do PDF baixado
                             }
                         ]
+                    };
+                    // console.log(msg);
+                    console.log(mailOptions);
+                    try {
+                        await transporter.sendMail(mailOptions);
+                    }
+                    catch (error) {
+                        console.log(error);
+                        this.logError(error, email.email, client);
+                    }
+                }
+                else if (email?.email) {
+                    const mailOptions = {
+                        from: process.env.EMAIL,
+                        to: String(email.email),
+                        subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
+                        html: html_msg,
                     };
                     console.log(mailOptions);
                     try {
