@@ -23,10 +23,10 @@ node_cron_1.default.schedule('0 4 * * *', () => {
     console.log('RUNNING CRONTAB THE DAY');
     emailController.DiasDoVencimento();
 });
-node_cron_1.default.schedule('*/1 * * * *', () => {
-    console.log('RUNNING CRONTAB TEST');
-    emailController.TesteEmail();
-});
+// cron.schedule('*/1 * * * *', () => {
+//     console.log('RUNNING CRONTAB TEST');
+//     emailController.TesteEmail();
+// })
 const pdfPath = '/opt/mk-auth/print_pdf/boletos/'; // Caminho do arquivo no sistema de arquivos
 const transporter = nodemailer_1.default.createTransport({
     host: 'smtp-mail.outlook.com',
@@ -93,99 +93,95 @@ class EmailController {
             client.end();
         }
     }
-    async TesteEmail() {
-        const date = new Date();
-        const anoAtual = date.getFullYear(); // Obtém o ano atual
-        const MesDeHoje = date.getMonth() + 1; // getMonth retorna de 0 a 11, então adicionamos 1
-        const diaHoje = date.getDate(); // getDate retorna o dia do mês
-        const diaVencimento = diaHoje;
-        console.log(MesDeHoje);
-        console.log(diaHoje);
-        const resultados = ds_1.AppDataSource.getRepository(Record_1.Record);
-        const clientes = await resultados.find({
-            where: {
-                datavenc: (0, typeorm_1.Raw)(alias => `(YEAR(${alias}) = ${anoAtual} AND MONTH(${alias}) = ${MesDeHoje} AND DAY(${alias}) = ${diaVencimento})`),
-                datadel: (0, typeorm_1.Raw)(alias => `${alias} IS NULL`),
-                status: (0, typeorm_1.Raw)(alias => `${alias} != 'pago'`),
-                login: "PEDROJOVANUZZI"
-            }
-        });
-        console.log(clientes);
-        clientes.map(async (client) => {
-            try {
-                let msg = "";
-                const idBoleto = client.uuid_lanc;
-                const pix_resultados = ds_1.AppDataSource.getRepository(Pix_1.Pix);
-                const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
-                const dateString = client.datavenc;
-                const formattedDate = dateString.split(' ')[0].split('-').reverse().join('/');
-                const pppoe = client.login;
-                const clientesRepo = ds_1.AppDataSource.getRepository(User_1.User);
-                const email = await clientesRepo.findOne({ where: { login: pppoe, cli_ativado: "s" } });
-                const html_msg = this.msg(msg, formattedDate, pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero);
-                // Caminho do PDF remoto no servidor FTP
-                const ftpHost = String(process.env.HOST_FTP);
-                const ftpUser = String(process.env.USERNAME_FTP); // ajuste com suas credenciais
-                const ftpPassword = String(process.env.PASSWORD_FTP); // ajuste com suas credenciais
-                const remotePdfPath = `${pdfPath}${idBoleto}.pdf`; // ajustado para o ID do cliente
-                console.log("RemotePDF: " + remotePdfPath);
-                const localPdfPath = path_1.default.join(__dirname, "..", "..", 'temp', `${idBoleto}.pdf`); // Caminho local temporário para salvar o PDF
-                // Baixar o PDF do servidor FTP antes de enviar o e-mail
-                const pdfDownload = await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
-                if (email?.email && pdfDownload) {
-                    const mailOptions = {
-                        from: process.env.EMAIL,
-                        to: String(email.email),
-                        subject: `Sua Fatura Vence Hoje ${pppoe.toUpperCase()}`,
-                        html: html_msg,
-                        attachments: [
-                            {
-                                filename: 'Boleto.pdf',
-                                path: localPdfPath // Especifica o caminho local do PDF baixado
-                            }
-                        ]
-                    };
-                    // console.log(msg);
-                    console.log(mailOptions);
-                    try {
-                        await transporter.sendMail(mailOptions);
-                    }
-                    catch (error) {
-                        console.log(error);
-                        this.logError(error, email.email, client);
-                    }
-                }
-                else if (email?.email) {
-                    const mailOptions = {
-                        from: process.env.EMAIL,
-                        to: String(email.email),
-                        subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
-                        html: html_msg,
-                    };
-                    console.log(mailOptions);
-                    try {
-                        await transporter.sendMail(mailOptions);
-                        console.log("E-mail enviado com sucesso!");
-                    }
-                    catch (error) {
-                        console.log(error);
-                        this.logError(error, email.email, client);
-                    }
-                    // Após enviar o e-mail, deletar o arquivo local temporário
-                    fs_1.default.unlinkSync(localPdfPath);
-                }
-                else {
-                    console.log("Sem Email Cadastrado");
-                    this.logError("Sem Email Cadastrado", "Email", client);
-                }
-            }
-            catch (error) {
-                console.log(error);
-                this.logError(error, "N/A", client);
-            }
-        });
-        console.log("Finalizado");
-    }
+    //   async TesteEmail() {
+    //     const date = new Date();
+    //     const anoAtual = date.getFullYear(); // Obtém o ano atual
+    //     const MesDeHoje = date.getMonth() + 1; // getMonth retorna de 0 a 11, então adicionamos 1
+    //     const diaHoje = date.getDate(); // getDate retorna o dia do mês
+    //     const diaVencimento = diaHoje;
+    //     console.log(MesDeHoje);
+    //     console.log(diaHoje);
+    //     const resultados = AppDataSource.getRepository(Record);
+    //     const clientes = await resultados.find({
+    //         where: {
+    //             datavenc: Raw(alias => `(YEAR(${alias}) = ${anoAtual} AND MONTH(${alias}) = ${MesDeHoje} AND DAY(${alias}) = ${diaVencimento})`),
+    //             datadel: Raw(alias => `${alias} IS NULL`),
+    //             status: Raw(alias => `${alias} != 'pago'`),
+    //             login: "PEDROJOVANUZZI"
+    //         }
+    //     });
+    //     console.log(clientes);
+    //     clientes.map(async (client: any) => {
+    //         try {
+    //             let msg = "";
+    //             const idBoleto = client.uuid_lanc;
+    //             const pix_resultados = AppDataSource.getRepository(Pix);
+    //             const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
+    //             const dateString = client.datavenc;
+    //             const formattedDate = dateString.split(' ')[0].split('-').reverse().join('/');
+    //             const pppoe = client.login;
+    //             const clientesRepo = AppDataSource.getRepository(User);
+    //             const email = await clientesRepo.findOne({ where: { login: pppoe, cli_ativado: "s" } });
+    //             const html_msg = this.msg(msg, formattedDate, pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero);
+    //             // Caminho do PDF remoto no servidor FTP
+    //             const ftpHost = String(process.env.HOST_FTP);
+    //             const ftpUser = String(process.env.USERNAME_FTP); // ajuste com suas credenciais
+    //             const ftpPassword = String(process.env.PASSWORD_FTP); // ajuste com suas credenciais
+    //             const remotePdfPath = `${pdfPath}${idBoleto}.pdf`; // ajustado para o ID do cliente
+    //             console.log("RemotePDF: " + remotePdfPath);
+    //             const localPdfPath = path.join(__dirname, ".." , "..", 'temp', `${idBoleto}.pdf`); // Caminho local temporário para salvar o PDF
+    //             // Baixar o PDF do servidor FTP antes de enviar o e-mail
+    //             const pdfDownload = await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
+    //             if(email?.email && pdfDownload){
+    //                 const mailOptions = {
+    //                     from: process.env.EMAIL,
+    //                     to: String(email.email),
+    //                     subject: `Sua Fatura Vence Hoje ${pppoe.toUpperCase()}`,
+    //                     html: html_msg,
+    //                     attachments: [
+    //                         {
+    //                             filename: 'Boleto.pdf',
+    //                             path: localPdfPath // Especifica o caminho local do PDF baixado
+    //                         }
+    //                     ]
+    //                 };
+    //                 // console.log(msg);
+    //                 console.log(mailOptions);
+    //                 try {
+    //                     await transporter.sendMail(mailOptions);         
+    //                 } catch (error) {
+    //                     console.log(error);
+    //                     this.logError(error, email.email, client);
+    //                 }
+    //             }
+    //             else if (email?.email) {
+    //                 const mailOptions = {
+    //                     from: process.env.EMAIL,
+    //                     to: String(email.email),
+    //                     subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
+    //                     html: html_msg,
+    //                 };
+    //                 console.log(mailOptions);
+    //                 try {
+    //                     await transporter.sendMail(mailOptions);
+    //                     console.log("E-mail enviado com sucesso!");
+    //                 } catch (error) {
+    //                     console.log(error);
+    //                     this.logError(error, email.email, client);
+    //                 }
+    //                 // Após enviar o e-mail, deletar o arquivo local temporário
+    //                 fs.unlinkSync(localPdfPath);
+    //             } else {
+    //                 console.log("Sem Email Cadastrado");
+    //                 this.logError("Sem Email Cadastrado", "Email", client);
+    //             }
+    //         } catch (error) {
+    //             console.log(error);
+    //             this.logError(error, "N/A", client);
+    //         }
+    //     });
+    //     console.log("Finalizado");
+    // }
     async DiasAntes5() {
         const date = new Date();
         const anoAtual = date.getFullYear(); // Obtém o ano atual
