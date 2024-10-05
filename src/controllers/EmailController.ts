@@ -26,7 +26,7 @@ interface MailOptions {
     message: {
         subject: string;
         body: {
-            contentType: "Text";
+            contentType: "HTML";
             content: string;
         };
         toRecipients: Array<{
@@ -42,7 +42,7 @@ interface MailOptionsWithFile {
     message: {
         subject: string;
         body: {
-            contentType: "Text";
+            contentType: "HTML";
             content: string;
         };
         toRecipients: Array<{
@@ -258,7 +258,7 @@ class EmailController {
                         message: {
                             subject: `Sua Fatura Vence Hoje!`,
                             body: {
-                                contentType: "Text",
+                                contentType: "HTML",
                                 content: html_msg
                             },
                             toRecipients: [
@@ -294,7 +294,7 @@ class EmailController {
                         message: {
                             subject: `Sua Fatura Vence Hoje!`,
                             body: {
-                                contentType: "Text",
+                                contentType: "HTML",
                                 content: html_msg
                             },
                             toRecipients: [
@@ -397,7 +397,7 @@ class EmailController {
                     message: {
                         subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
                         body: {
-                            contentType: "Text",
+                            contentType: "HTML",
                             content: html_msg
                         },
                         toRecipients: [
@@ -436,7 +436,7 @@ class EmailController {
                     message: {
                         subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
                         body: {
-                            contentType: "Text",
+                            contentType: "HTML",
                             content: html_msg
                         },
                         toRecipients: [
@@ -536,7 +536,7 @@ class EmailController {
                     message: {
                         subject: `Sua Fatura Vence Hoje!`,
                         body: {
-                            contentType: "Text",
+                            contentType: "HTML",
                             content: html_msg
                         },
                         toRecipients: [
@@ -576,7 +576,7 @@ class EmailController {
                     message: {
                         subject: `Sua Fatura Vence Hoje!`,
                         body: {
-                            contentType: "Text",
+                            contentType: "HTML",
                             content: html_msg
                         },
                         toRecipients: [
