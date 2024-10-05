@@ -56,7 +56,7 @@ async function sendEmail(mailOptions) {
     const url = `https://graph.microsoft.com/v1.0/users/${process.env.OUTLOOK_USER}/sendMail`;
     try {
         await axios_1.default.post(url, {
-            mailOptions
+            message: mailOptions.message
         }, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
