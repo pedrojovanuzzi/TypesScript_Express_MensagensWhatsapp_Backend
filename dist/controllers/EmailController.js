@@ -179,11 +179,13 @@ class EmailController {
                                 contentType: "Text",
                                 content: html_msg
                             },
-                            toRecipients: {
-                                emailAddress: {
-                                    address: String(email.email)
+                            toRecipients: [
+                                {
+                                    emailAddress: {
+                                        address: String(email.email)
+                                    }
                                 }
-                            },
+                            ],
                             attachments: [
                                 {
                                     '@odata.type': '#microsoft.graph.fileAttachment',
@@ -212,11 +214,13 @@ class EmailController {
                                 contentType: "Text",
                                 content: html_msg
                             },
-                            toRecipients: {
-                                emailAddress: {
-                                    address: String(email.email)
+                            toRecipients: [
+                                {
+                                    emailAddress: {
+                                        address: String(email.email)
+                                    }
                                 }
-                            }
+                            ],
                         },
                         saveToSentItems: "true"
                     };
@@ -291,11 +295,13 @@ class EmailController {
                                 contentType: "Text",
                                 content: html_msg
                             },
-                            toRecipients: {
-                                emailAddress: {
-                                    address: String(email.email)
+                            toRecipients: [
+                                {
+                                    emailAddress: {
+                                        address: String(email.email)
+                                    }
                                 }
-                            },
+                            ],
                             attachments: [
                                 {
                                     '@odata.type': '#microsoft.graph.fileAttachment',
@@ -325,11 +331,13 @@ class EmailController {
                                 contentType: "Text",
                                 content: html_msg
                             },
-                            toRecipients: {
-                                emailAddress: {
-                                    address: String(email.email)
+                            toRecipients: [
+                                {
+                                    emailAddress: {
+                                        address: String(email.email)
+                                    }
                                 }
-                            }
+                            ],
                         },
                         saveToSentItems: "true"
                     };
@@ -401,11 +409,13 @@ class EmailController {
                                 contentType: "Text",
                                 content: html_msg
                             },
-                            toRecipients: {
-                                emailAddress: {
-                                    address: String(email.email)
+                            toRecipients: [
+                                {
+                                    emailAddress: {
+                                        address: String(email.email)
+                                    }
                                 }
-                            },
+                            ],
                             attachments: [
                                 {
                                     '@odata.type': '#microsoft.graph.fileAttachment',
@@ -436,11 +446,13 @@ class EmailController {
                                 contentType: "Text",
                                 content: html_msg
                             },
-                            toRecipients: {
-                                emailAddress: {
-                                    address: String(email.email)
+                            toRecipients: [
+                                {
+                                    emailAddress: {
+                                        address: String(email.email)
+                                    }
                                 }
-                            }
+                            ],
                         },
                         saveToSentItems: "true"
                     };
