@@ -111,7 +111,7 @@ async function sendEmail(mailOptions: MailOptions | MailOptionsWithFile): Promis
         await axios.post(
             url,
             {
-                message: mailOptions               
+                mailOptions               
             },
             {
                 headers: {
