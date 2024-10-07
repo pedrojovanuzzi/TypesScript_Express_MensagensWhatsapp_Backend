@@ -17,7 +17,14 @@ import Queue from 'bull';
 
 dotenv.config();
 
-const emailQueue = new Queue('emailQueue');
+    const emailQueue = new Queue('emailQueue', {
+        redis:{
+            tls: {
+                rejectUnauthorized: false,  // Pode ser necessário desativar a verificação de certificado, dependendo do ambiente
+            },
+            enableTLSForSentinelMode: false
+        }
+    });
 
 emailQueue.process(async (job) => {
     const mailOptions = job.data.mailOptions;

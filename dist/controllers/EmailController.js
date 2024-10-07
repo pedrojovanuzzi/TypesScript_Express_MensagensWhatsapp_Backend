@@ -17,7 +17,14 @@ const axios_1 = __importDefault(require("axios"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const bull_1 = __importDefault(require("bull"));
 dotenv_1.default.config();
-const emailQueue = new bull_1.default('emailQueue');
+const emailQueue = new bull_1.default('emailQueue', {
+    redis: {
+        tls: {
+            rejectUnauthorized: false, // Pode ser necessário desativar a verificação de certificado, dependendo do ambiente
+        },
+        enableTLSForSentinelMode: false
+    }
+});
 emailQueue.process(async (job) => {
     const mailOptions = job.data.mailOptions;
     await sendEmail(mailOptions);
