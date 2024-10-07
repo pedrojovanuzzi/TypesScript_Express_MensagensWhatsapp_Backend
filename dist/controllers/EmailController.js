@@ -15,7 +15,16 @@ const ssh2_sftp_client_1 = __importDefault(require("ssh2-sftp-client"));
 const qs_1 = __importDefault(require("qs"));
 const axios_1 = __importDefault(require("axios"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const bull_1 = __importDefault(require("bull"));
 dotenv_1.default.config();
+const emailQueue = new bull_1.default('emailQueue');
+emailQueue.process(async (job) => {
+    const mailOptions = job.data.mailOptions;
+    await sendEmail(mailOptions);
+});
+function addEmailToQueue(mailOptions) {
+    emailQueue.add({ mailOptions }, { delay: 6000 });
+}
 function getBase64File(filePath) {
     const file = fs_1.default.readFileSync(filePath);
     return file.toString('base64');
@@ -132,118 +141,122 @@ class EmailController {
             client.end();
         }
     }
-    //   async TesteEmail() {
-    //     const date = new Date();
-    //     const anoAtual = date.getFullYear(); // Obtém o ano atual
-    //     const MesDeHoje = date.getMonth() + 1; // getMonth retorna de 0 a 11, então adicionamos 1
-    //     const diaHoje = date.getDate(); // getDate retorna o dia do mês
-    //     const diaVencimento = diaHoje;
-    //     console.log(MesDeHoje);
-    //     console.log(diaHoje);
-    //     const resultados = AppDataSource.getRepository(Record);
-    //     const clientes = await resultados.find({
-    //         where: {
-    //             datavenc: Raw(alias => `(YEAR(${alias}) = ${anoAtual} AND MONTH(${alias}) = ${MesDeHoje} AND DAY(${alias}) = ${diaVencimento})`),
-    //             datadel: Raw(alias => `${alias} IS NULL`),
-    //             status: Raw(alias => `${alias} != 'pago'`),
-    //             login: "PEDROJOVANUZZI"
-    //         }
-    //     });
-    //     console.log(clientes);
-    //     clientes.map(async (client: any) => {
-    //         try {
-    //             let msg = "";
-    //             const idBoleto = client.uuid_lanc;
-    //             const pix_resultados = AppDataSource.getRepository(Pix);
-    //             const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
-    //             const dateString = client.datavenc;
-    //             const formattedDate = dateString.split(' ')[0].split('-').reverse().join('/');
-    //             const pppoe = client.login;
-    //             const clientesRepo = AppDataSource.getRepository(User);
-    //             const email = await clientesRepo.findOne({ where: { login: pppoe, cli_ativado: "s" } });
-    //             const html_msg = this.msg(msg, formattedDate, pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero);
-    //             // Caminho do PDF remoto no servidor FTP
-    //             const ftpHost = String(process.env.HOST_FTP);
-    //             const ftpUser = String(process.env.USERNAME_FTP); // ajuste com suas credenciais
-    //             const ftpPassword = String(process.env.PASSWORD_FTP); // ajuste com suas credenciais
-    //             const remotePdfPath = `${pdfPath}${idBoleto}.pdf`; // ajustado para o ID do cliente
-    //             console.log("RemotePDF: " + remotePdfPath);
-    //             const localPdfPath = path.join(__dirname, ".." , "..", 'temp', `${idBoleto}.pdf`); // Caminho local temporário para salvar o PDF
-    //             // Baixar o PDF do servidor FTP antes de enviar o e-mail
-    //             const pdfDownload = await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
-    //             if(email?.email && pdfDownload){
-    //                 const mailOptions : MailOptionsWithFile = {
-    //                     message: {
-    //                         subject: `Sua Fatura Vence Hoje!`,
-    //                         body: {
-    //                             contentType: "HTML",
-    //                             content: html_msg
-    //                         },
-    //                         toRecipients: [
-    //                             {
-    //                                 emailAddress: {
-    //                                     address: String(email.email)
-    //                                 }
-    //                             }
-    //                         ], 
-    //                         attachments: [
-    //                             {
-    //                                 '@odata.type': '#microsoft.graph.fileAttachment',
-    //                                 name: "Boleto.pdf",
-    //                                 contentType: 'application/pdf',
-    //                                 contentBytes: getBase64File(localPdfPath)
-    //                             }
-    //                         ]
-    //                     },
-    //                     saveToSentItems: "true"
-    //                 }
-    //                 console.log(mailOptions);
-    //                 try {
-    //                     await sendEmail(mailOptions);
-    //                 } catch (error) {
-    //                     console.log(error);
-    //                     this.logError(error, email.email, client);
-    //                 }
-    //             }
-    //             else if (email?.email) {
-    //                 const mailOptions : MailOptions = {
-    //                     message: {
-    //                         subject: `Sua Fatura Vence Hoje!`,
-    //                         body: {
-    //                             contentType: "HTML",
-    //                             content: html_msg
-    //                         },
-    //                         toRecipients: [
-    //                             {
-    //                                 emailAddress: {
-    //                                     address: String(email.email)
-    //                                 }
-    //                             }
-    //                         ], 
-    //                     },
-    //                     saveToSentItems: "true"
-    //                 }
-    //                 console.log(mailOptions);
-    //                 try {
-    //                     await sendEmail(mailOptions);
-    //                     console.log("E-mail enviado com sucesso!");
-    //                 } catch (error) {
-    //                     console.log(error);
-    //                     this.logError(error, email.email, client);
-    //                 }
-    //                 // Após enviar o e-mail, deletar o arquivo local temporário
-    //                 fs.unlinkSync(localPdfPath);
-    //             } else {
-    //                 console.log("Sem Email Cadastrado");
-    //                 this.logError("Sem Email Cadastrado", "Email", client);
-    //             }
-    //         } catch (error) {
-    //             console.log(error);
-    //             this.logError(error, "N/A", client);
-    //         }
-    //     });
-    //     console.log("Finalizado");
-    // }
+    async TesteEmail() {
+        const date = new Date();
+        const anoAtual = date.getFullYear(); // Obtém o ano atual
+        const MesDeHoje = date.getMonth() + 1; // getMonth retorna de 0 a 11, então adicionamos 1
+        const diaHoje = date.getDate(); // getDate retorna o dia do mês
+        const diaVencimento = diaHoje;
+        console.log(MesDeHoje);
+        console.log(diaHoje);
+        const resultados = ds_1.AppDataSource.getRepository(Record_1.Record);
+        const clientes = await resultados.find({
+            where: {
+                datavenc: (0, typeorm_1.Raw)(alias => `(YEAR(${alias}) = ${anoAtual} AND MONTH(${alias}) = ${MesDeHoje} AND DAY(${alias}) = ${diaVencimento})`),
+                datadel: (0, typeorm_1.Raw)(alias => `${alias} IS NULL`),
+                status: (0, typeorm_1.Raw)(alias => `${alias} != 'pago'`),
+                login: "PEDROJOVANUZZI"
+            }
+        });
+        console.log(clientes);
+        clientes.map(async (client) => {
+            try {
+                let msg = "";
+                const idBoleto = client.uuid_lanc;
+                const pix_resultados = ds_1.AppDataSource.getRepository(Pix_1.Pix);
+                const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
+                const dateString = client.datavenc;
+                const formattedDate = dateString.split(' ')[0].split('-').reverse().join('/');
+                const pppoe = client.login;
+                const clientesRepo = ds_1.AppDataSource.getRepository(User_1.User);
+                const email = await clientesRepo.findOne({ where: { login: pppoe, cli_ativado: "s" } });
+                const html_msg = this.msg(msg, formattedDate, pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero);
+                // Caminho do PDF remoto no servidor FTP
+                const ftpHost = String(process.env.HOST_FTP);
+                const ftpUser = String(process.env.USERNAME_FTP); // ajuste com suas credenciais
+                const ftpPassword = String(process.env.PASSWORD_FTP); // ajuste com suas credenciais
+                const remotePdfPath = `${pdfPath}${idBoleto}.pdf`; // ajustado para o ID do cliente
+                console.log("RemotePDF: " + remotePdfPath);
+                const localPdfPath = path_1.default.join(__dirname, "..", "..", 'temp', `${idBoleto}.pdf`); // Caminho local temporário para salvar o PDF
+                // Baixar o PDF do servidor FTP antes de enviar o e-mail
+                const pdfDownload = await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
+                if (email?.email && pdfDownload) {
+                    const mailOptions = {
+                        message: {
+                            subject: `Sua Fatura Vence Hoje!`,
+                            body: {
+                                contentType: "HTML",
+                                content: html_msg
+                            },
+                            toRecipients: [
+                                {
+                                    emailAddress: {
+                                        address: String(email.email)
+                                    }
+                                }
+                            ],
+                            attachments: [
+                                {
+                                    '@odata.type': '#microsoft.graph.fileAttachment',
+                                    name: "Boleto.pdf",
+                                    contentType: 'application/pdf',
+                                    contentBytes: getBase64File(localPdfPath)
+                                }
+                            ]
+                        },
+                        saveToSentItems: "true"
+                    };
+                    console.log(mailOptions);
+                    try {
+                        addEmailToQueue(mailOptions);
+                    }
+                    catch (error) {
+                        console.log(error);
+                        this.logError(error, email.email, client);
+                    }
+                }
+                else if (email?.email) {
+                    const mailOptions = {
+                        message: {
+                            subject: `Sua Fatura Vence Hoje!`,
+                            body: {
+                                contentType: "HTML",
+                                content: html_msg
+                            },
+                            toRecipients: [
+                                {
+                                    emailAddress: {
+                                        address: String(email.email)
+                                    }
+                                }
+                            ],
+                        },
+                        saveToSentItems: "true"
+                    };
+                    console.log(mailOptions);
+                    try {
+                        addEmailToQueue(mailOptions);
+                        console.log("E-mail enviado com sucesso!");
+                    }
+                    catch (error) {
+                        console.log(error);
+                        this.logError(error, email.email, client);
+                    }
+                    // Após enviar o e-mail, deletar o arquivo local temporário
+                    fs_1.default.unlinkSync(localPdfPath);
+                }
+                else {
+                    console.log("Sem Email Cadastrado");
+                    this.logError("Sem Email Cadastrado", "Email", client);
+                }
+            }
+            catch (error) {
+                console.log(error);
+                this.logError(error, "N/A", client);
+            }
+        });
+        console.log("Finalizado");
+    }
     async DiasAntes5() {
         const date = new Date();
         const anoAtual = date.getFullYear(); // Obtém o ano atual
@@ -312,7 +325,7 @@ class EmailController {
                     // console.log(msg);
                     console.log(mailOptions);
                     try {
-                        await sendEmail(mailOptions);
+                        addEmailToQueue(mailOptions);
                     }
                     catch (error) {
                         console.log(error);
@@ -339,7 +352,7 @@ class EmailController {
                     };
                     console.log(mailOptions);
                     try {
-                        await sendEmail(mailOptions);
+                        addEmailToQueue(mailOptions);
                         this.logSend(email.email, client);
                     }
                     catch (error) {
@@ -427,7 +440,7 @@ class EmailController {
                     // console.log(msg);
                     console.log(mailOptions);
                     try {
-                        await sendEmail(mailOptions);
+                        addEmailToQueue(mailOptions);
                     }
                     catch (error) {
                         console.log(error);
@@ -455,7 +468,7 @@ class EmailController {
                     };
                     console.log(mailOptions);
                     try {
-                        await sendEmail(mailOptions);
+                        addEmailToQueue(mailOptions);
                         this.logSend(email.email, client);
                     }
                     catch (error) {
