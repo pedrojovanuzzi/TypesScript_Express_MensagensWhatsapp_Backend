@@ -29,7 +29,7 @@ emailQueue.process(async (job) => {
     try {
         await sendEmail(mailOptions);
         console.log('E-mail enviado com sucesso!');
-        emailQueue.getJobs(['waiting', 'active', 'completed', 'failed']).then((jobs) => {
+        emailQueue.getJobs(['waiting', 'active']).then((jobs) => {
             console.log('Jobs na fila:', jobs.length);
         });
     }
