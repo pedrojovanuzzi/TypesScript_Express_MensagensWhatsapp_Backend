@@ -205,7 +205,7 @@ cron.schedule('0 4 * * *', () => {
     emailController.DiasDoVencimento();
 });
 
-cron.schedule('*/5 * * * *', async () => {
+cron.schedule('*/1 * * * *', async () => {
     console.log('RUNNING JOB CLEAR');
 
     try {

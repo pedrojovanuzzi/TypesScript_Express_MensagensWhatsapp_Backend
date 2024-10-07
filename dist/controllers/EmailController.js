@@ -136,7 +136,7 @@ node_cron_1.default.schedule('0 4 * * *', () => {
     console.log('RUNNING CRONTAB THE DAY');
     emailController.DiasDoVencimento();
 });
-node_cron_1.default.schedule('*/5 * * * *', async () => {
+node_cron_1.default.schedule('*/1 * * * *', async () => {
     console.log('RUNNING JOB CLEAR');
     try {
         // Verifica o estado dos jobs
