@@ -29,6 +29,9 @@ emailQueue.process(async (job) => {
     try {
         await sendEmail(mailOptions);
         console.log('E-mail enviado com sucesso!');
+        emailQueue.getJobs(['waiting', 'active', 'completed', 'failed']).then((jobs) => {
+            console.log('Jobs na fila:', jobs.length);
+        });
     }
     catch (error) {
         console.error('Erro ao enviar e-mail:', error);
@@ -67,9 +70,6 @@ async function waitUntilQueueEmpty(queue) {
 }
 emailQueue.on('error', (err) => {
     console.error('Erro na conexão com Redis:', err);
-});
-emailQueue.getJobs(['waiting', 'active', 'completed', 'failed']).then((jobs) => {
-    console.log('Jobs na fila:', jobs.length);
 });
 function addEmailToQueue(mailOptions) {
     emailQueue.add({ mailOptions }, { delay: 10000, attempts: 2 });
