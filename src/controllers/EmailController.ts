@@ -215,7 +215,7 @@ cron.schedule('*/1 * * * *', async () => {
 
     try {
         // Verifica o estado dos jobs
-        const jobs = await emailQueue.getJobs(['waiting']);
+        const jobs = await emailQueue.getJobs(['waiting','active']);
         console.log('Jobs na fila:', jobs.length);
 
         // Aguarda até que a fila esteja vazia
