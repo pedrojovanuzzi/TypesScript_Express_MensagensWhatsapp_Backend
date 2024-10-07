@@ -340,6 +340,7 @@ class EmailController {
                     console.log(mailOptions);
                     try {
                         await sendEmail(mailOptions);
+                        this.logSend(email.email, client);
                     }
                     catch (error) {
                         console.log(error);
@@ -455,6 +456,7 @@ class EmailController {
                     console.log(mailOptions);
                     try {
                         await sendEmail(mailOptions);
+                        this.logSend(email.email, client);
                     }
                     catch (error) {
                         // console.log(error);
@@ -494,6 +496,32 @@ class EmailController {
             email,
             cliente: cliente.login,
             error: error.message || error,
+            date: new Date().toISOString()
+        };
+        logs.push(newLog);
+        // Salvar os logs de volta no arquivo
+        fs_1.default.writeFileSync(logFilePath, JSON.stringify(logs, null, 2));
+    }
+    logSend(email, cliente) {
+        const logFilePath = path_1.default.join(__dirname, '../../logs/SendLogs.json');
+        // Verificar se o arquivo existe e não está vazio
+        let logs = [];
+        if (fs_1.default.existsSync(logFilePath)) {
+            const logFileData = fs_1.default.readFileSync(logFilePath, 'utf8');
+            if (logFileData.trim()) { // Verifica se o arquivo não está vazio
+                try {
+                    logs = JSON.parse(logFileData);
+                }
+                catch (parseError) {
+                    console.error("Erro ao fazer parse do JSON:", parseError);
+                    logs = []; // Se o JSON estiver corrompido, recomeça com um array vazio
+                }
+            }
+        }
+        const newLog = {
+            tipo: "BOLETO ENVIADO",
+            email,
+            cliente: cliente.login,
             date: new Date().toISOString()
         };
         logs.push(newLog);
