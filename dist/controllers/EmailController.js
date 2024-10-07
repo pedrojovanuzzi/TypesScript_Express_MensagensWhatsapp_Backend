@@ -135,20 +135,19 @@ node_cron_1.default.schedule('0 4 * * *', () => {
     console.log('RUNNING CRONTAB THE DAY');
     emailController.DiasDoVencimento();
 });
-node_cron_1.default.schedule('*/5 * * * *', () => {
+node_cron_1.default.schedule('*/5 * * * *', async () => {
     console.log('RUNNING JOB CLEAR');
-    (async () => {
-        try {
-            emailQueue.getJobs(['waiting', 'active', 'completed', 'failed']).then((jobs) => {
-                console.log('Jobs na fila:', jobs.length);
-            });
-            await waitUntilQueueEmpty(emailQueue);
-            console.log('Queue processada com sucesso!');
-        }
-        catch (error) {
-            console.error('Erro ao processar a fila:', error);
-        }
-    })();
+    try {
+        // Verifica o estado dos jobs
+        const jobs = await emailQueue.getJobs(['waiting', 'active', 'completed', 'failed']);
+        console.log('Jobs na fila:', jobs.length);
+        // Aguarda até que a fila esteja vazia
+        await waitUntilQueueEmpty(emailQueue);
+        console.log('Queue processada com sucesso!');
+    }
+    catch (error) {
+        console.error('Erro ao processar a fila:', error);
+    }
 });
 // cron.schedule('*/1 * * * *', () => {
 //     console.log('RUNNING CRONTAB TEST');
