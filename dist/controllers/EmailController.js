@@ -139,7 +139,10 @@ node_cron_1.default.schedule('*/5 * * * *', () => {
     console.log('RUNNING JOB CLEAR');
     (async () => {
         try {
-            await waitUntilQueueEmpty(emailQueue); // Passe a fila aqui se necessário
+            emailQueue.getJobs(['waiting', 'active', 'completed', 'failed']).then((jobs) => {
+                console.log('Jobs na fila:', jobs.length);
+            });
+            await waitUntilQueueEmpty(emailQueue);
             console.log('Queue processada com sucesso!');
         }
         catch (error) {
