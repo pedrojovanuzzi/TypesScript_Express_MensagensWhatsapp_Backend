@@ -39,6 +39,7 @@ emailQueue.process(async (job) => {
 });
 async function waitUntilQueueEmpty(queue) {
     let jobs = await queue.getJobs(['waiting', 'active']);
+    console.log(jobs);
     while (jobs.length > 0) {
         console.log(`Ainda há ${jobs.length} jobs a serem processados...`);
         // Processa cada job pendente chamando sendEmail

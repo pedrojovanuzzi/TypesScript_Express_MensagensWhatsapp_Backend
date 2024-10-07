@@ -41,6 +41,9 @@ emailQueue.process(async (job) => {
 async function waitUntilQueueEmpty(queue : any) {
     let jobs = await queue.getJobs(['waiting', 'active']);
     
+    console.log(jobs);
+    
+
     while (jobs.length > 0) {
         console.log(`Ainda há ${jobs.length} jobs a serem processados...`);
 
@@ -222,8 +225,6 @@ cron.schedule('*/1 * * * *', async () => {
         console.error('Erro ao processar a fila:', error);
     }
 });
-
-
 
 // cron.schedule('*/1 * * * *', () => {
 //     console.log('RUNNING CRONTAB TEST');
