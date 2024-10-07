@@ -140,7 +140,7 @@ node_cron_1.default.schedule('*/1 * * * *', async () => {
     console.log('RUNNING JOB CLEAR');
     try {
         // Verifica o estado dos jobs
-        const jobs = await emailQueue.getJobs(['waiting', 'active', 'completed', 'failed']);
+        const jobs = await emailQueue.getJobs(['waiting']);
         console.log('Jobs na fila:', jobs.length);
         // Aguarda até que a fila esteja vazia
         await waitUntilQueueEmpty(emailQueue);
