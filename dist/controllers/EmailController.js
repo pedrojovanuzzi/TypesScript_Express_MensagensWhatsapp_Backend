@@ -33,7 +33,6 @@ emailQueue.process(async (job) => {
     catch (error) {
         console.error('Erro ao enviar e-mail:', error);
     }
-    await waitUntilQueueEmpty(emailQueue);
 });
 async function waitUntilQueueEmpty(queue) {
     let jobs = await queue.getJobs(['waiting', 'active']);
@@ -136,7 +135,7 @@ node_cron_1.default.schedule('0 4 * * *', () => {
     console.log('RUNNING CRONTAB THE DAY');
     emailController.DiasDoVencimento();
 });
-node_cron_1.default.schedule('*/1 * * * *', () => {
+node_cron_1.default.schedule('*/3 * * * *', () => {
     console.log('RUNNING CRONTAB TEST');
     emailController.TesteEmail();
 });

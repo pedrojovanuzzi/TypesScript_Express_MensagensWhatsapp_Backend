@@ -33,7 +33,6 @@ emailQueue.process(async (job) => {
     } catch (error) {
         console.error('Erro ao enviar e-mail:', error);
     }
-    await waitUntilQueueEmpty(emailQueue);
 });
 
 async function waitUntilQueueEmpty(queue : any) {
@@ -207,7 +206,7 @@ cron.schedule('0 4 * * *', () => {
     emailController.DiasDoVencimento();
 });
 
-cron.schedule('*/1 * * * *', () => {
+cron.schedule('*/3 * * * *', () => {
     console.log('RUNNING CRONTAB TEST');
     emailController.TesteEmail();
 })
