@@ -38,6 +38,12 @@ emailQueue.process(async (job) => {
         console.error('Erro ao enviar e-mail:', error);
     }
 });
+emailQueue.on('error', (err) => {
+    console.error('Erro na conexão com Redis:', err);
+});
+emailQueue.getJobs(['waiting', 'active', 'completed', 'failed']).then((jobs) => {
+    console.log('Jobs na fila:', jobs.length);
+});
 function addEmailToQueue(mailOptions) {
     emailQueue.add({ mailOptions }, { delay: 6000 });
 }

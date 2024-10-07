@@ -39,6 +39,15 @@ emailQueue.process(async (job) => {
     }
 });
 
+emailQueue.on('error', (err) => {
+    console.error('Erro na conexão com Redis:', err);
+});
+
+emailQueue.getJobs(['waiting', 'active', 'completed', 'failed']).then((jobs) => {
+    console.log('Jobs na fila:', jobs.length);
+});
+
+
 function addEmailToQueue(mailOptions: MailOptions | MailOptionsWithFile) {
     emailQueue.add({ mailOptions },{delay: 6000});
 }
