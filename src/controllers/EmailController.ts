@@ -45,7 +45,7 @@ emailQueue.getJobs(['waiting', 'active', 'completed', 'failed']).then((jobs) => 
 
 
 function addEmailToQueue(mailOptions: MailOptions | MailOptionsWithFile) {
-    emailQueue.add({ mailOptions },{delay: 10000});
+    emailQueue.add({ mailOptions },{delay: 10000, attempts: 2});
 }
 
 interface TokenResponse {

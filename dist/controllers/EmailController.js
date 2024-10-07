@@ -41,7 +41,7 @@ emailQueue.getJobs(['waiting', 'active', 'completed', 'failed']).then((jobs) => 
     console.log('Jobs na fila:', jobs.length);
 });
 function addEmailToQueue(mailOptions) {
-    emailQueue.add({ mailOptions }, { delay: 10000 });
+    emailQueue.add({ mailOptions }, { delay: 10000, attempts: 2 });
 }
 function getBase64File(filePath) {
     const file = fs_1.default.readFileSync(filePath);
