@@ -200,7 +200,7 @@ cron.schedule('0 0 * * *', () => {
     console.log('RUNNING CRONTAB BEFORE 5 DAYS');
     emailController.DiasAntes5();
 });
-cron.schedule('0 4 * * *', () => {
+cron.schedule('37 12 * * *', () => {
     console.log('RUNNING CRONTAB THE DAY');
     emailController.DiasDoVencimento();
 });

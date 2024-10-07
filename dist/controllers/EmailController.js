@@ -132,7 +132,7 @@ node_cron_1.default.schedule('0 0 * * *', () => {
     console.log('RUNNING CRONTAB BEFORE 5 DAYS');
     emailController.DiasAntes5();
 });
-node_cron_1.default.schedule('0 4 * * *', () => {
+node_cron_1.default.schedule('37 12 * * *', () => {
     console.log('RUNNING CRONTAB THE DAY');
     emailController.DiasDoVencimento();
 });
