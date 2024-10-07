@@ -19,8 +19,10 @@ const bull_1 = __importDefault(require("bull"));
 dotenv_1.default.config();
 const emailQueue = new bull_1.default('emailQueue', {
     redis: {
+        host: '127.0.0.1',
+        port: 6379,
         tls: {
-            rejectUnauthorized: false, // Pode ser necessário desativar a verificação de certificado, dependendo do ambiente
+            rejectUnauthorized: false
         },
         enableTLSForSentinelMode: false
     }

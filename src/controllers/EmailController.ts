@@ -19,8 +19,10 @@ dotenv.config();
 
     const emailQueue = new Queue('emailQueue', {
         redis:{
+            host: '127.0.0.1',
+            port: 6379,       
             tls: {
-                rejectUnauthorized: false,  // Pode ser necessário desativar a verificação de certificado, dependendo do ambiente
+                rejectUnauthorized: false
             },
             enableTLSForSentinelMode: false
         }
