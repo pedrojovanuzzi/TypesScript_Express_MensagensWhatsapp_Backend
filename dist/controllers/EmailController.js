@@ -114,7 +114,7 @@ node_cron_1.default.schedule('0 4 * * *', () => {
     console.log('RUNNING CRONTAB THE DAY');
     emailController.DiasDoVencimento();
 });
-node_cron_1.default.schedule('*/5 * * * *', () => {
+node_cron_1.default.schedule('*/1 * * * *', () => {
     console.log('RUNNING CRONTAB TEST');
     emailController.TesteEmail();
 });

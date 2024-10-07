@@ -178,7 +178,7 @@ cron.schedule('0 4 * * *', () => {
     emailController.DiasDoVencimento();
 });
 
-cron.schedule('*/5 * * * *', () => {
+cron.schedule('*/1 * * * *', () => {
     console.log('RUNNING CRONTAB TEST');
     emailController.TesteEmail();
 })
