@@ -26,8 +26,15 @@ const emailQueue = new bull_1.default('emailQueue', {
     }
 });
 emailQueue.process(async (job) => {
+    console.log('Processando email para:', job.data.mailOptions.message.toRecipients[0].emailAddress.address);
     const mailOptions = job.data.mailOptions;
-    await sendEmail(mailOptions);
+    try {
+        await sendEmail(mailOptions);
+        console.log('E-mail enviado com sucesso!');
+    }
+    catch (error) {
+        console.error('Erro ao enviar e-mail:', error);
+    }
 });
 async function addEmailToQueue(mailOptions) {
     emailQueue.add({ mailOptions }, { delay: 6000 });
