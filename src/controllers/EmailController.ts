@@ -39,7 +39,7 @@ emailQueue.process(async (job) => {
     }
 });
 
-async function addEmailToQueue(mailOptions: MailOptions | MailOptionsWithFile) {
+function addEmailToQueue(mailOptions: MailOptions | MailOptionsWithFile) {
     emailQueue.add({ mailOptions },{delay: 6000});
 }
 
@@ -309,7 +309,7 @@ class EmailController {
                     console.log(mailOptions);
     
                     try {
-                        await addEmailToQueue(mailOptions);
+                        addEmailToQueue(mailOptions);
                     } catch (error) {
                         console.log(error);
                         this.logError(error, email.email, client);
@@ -337,7 +337,7 @@ class EmailController {
                     console.log(mailOptions);
     
                     try {
-                        await addEmailToQueue(mailOptions);
+                        addEmailToQueue(mailOptions);
                         console.log("E-mail enviado com sucesso!");
                     } catch (error) {
                         console.log(error);
@@ -450,7 +450,7 @@ class EmailController {
                 console.log(mailOptions);
 
                 try {
-                    await addEmailToQueue(mailOptions);
+                    addEmailToQueue(mailOptions);
                 } catch (error) {
                     console.log(error);
                     this.logError(error, email.email, client);
@@ -479,7 +479,7 @@ class EmailController {
                 console.log(mailOptions);
 
                 try {
-                    await addEmailToQueue(mailOptions);
+                    addEmailToQueue(mailOptions);
                     this.logSend(email.email, client);
                 } catch (error) {
                     console.log(error);
@@ -590,7 +590,7 @@ class EmailController {
                 console.log(mailOptions);
 
                 try {
-                    await addEmailToQueue(mailOptions); 
+                    addEmailToQueue(mailOptions); 
                 } catch (error) {
                     console.log(error);
                     this.logError(error, email.email, client);
@@ -621,7 +621,7 @@ class EmailController {
                 
 
                 try {
-                    await addEmailToQueue(mailOptions);
+                    addEmailToQueue(mailOptions);
                     this.logSend(email.email, client);
                 } catch (error) {
                     // console.log(error);
