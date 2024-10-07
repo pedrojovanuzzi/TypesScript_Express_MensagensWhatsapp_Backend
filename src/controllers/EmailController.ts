@@ -38,13 +38,42 @@ emailQueue.process(async (job) => {
 
 async function waitUntilQueueEmpty(queue : any) {
     let jobs = await queue.getJobs(['waiting', 'active']);
+    
     while (jobs.length > 0) {
         console.log(`Ainda há ${jobs.length} jobs a serem processados...`);
-        await new Promise(resolve => setTimeout(resolve, 5000)); // Espera 5 segundos antes de checar novamente
+
+        // Processa cada job pendente chamando sendEmail
+        for (const job of jobs) {
+            const mailOptions = job.data.mailOptions;
+            try {
+                await sendEmail(mailOptions); // Envia o e-mail para cada job
+                console.log(`E-mail enviado com sucesso para: ${mailOptions.message.toRecipients[0].emailAddress.address}`);
+                
+                // Marcar o job como completo no Bull (opcional)
+                await job.moveToCompleted();
+            } catch (error) {
+                if (error instanceof Error) {
+                    console.error(`Erro ao enviar e-mail para: ${mailOptions.message.toRecipients[0].emailAddress.address}: ${error.message}`);
+                    
+                    // Marcar o job como falho no Bull (opcional)
+                    await job.moveToFailed({ message: error.message });
+                } else {
+                    console.error('Erro desconhecido ao enviar o e-mail', error);
+                }
+            }
+        }
+
+        // Espera 5 segundos antes de checar novamente por novos jobs
+        await new Promise(resolve => setTimeout(resolve, 5000));
+
+        // Verifica novamente se ainda há jobs pendentes
         jobs = await queue.getJobs(['waiting', 'active']);
     }
+
     console.log('Todos os jobs foram processados!');
 }
+
+
 
 emailQueue.on('error', (err) => {
     console.error('Erro na conexão com Redis:', err);
