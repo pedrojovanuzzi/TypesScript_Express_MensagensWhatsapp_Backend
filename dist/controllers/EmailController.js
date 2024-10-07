@@ -33,7 +33,17 @@ emailQueue.process(async (job) => {
     catch (error) {
         console.error('Erro ao enviar e-mail:', error);
     }
+    await waitUntilQueueEmpty(emailQueue);
 });
+async function waitUntilQueueEmpty(queue) {
+    let jobs = await queue.getJobs(['waiting', 'active']);
+    while (jobs.length > 0) {
+        console.log(`Ainda há ${jobs.length} jobs a serem processados...`);
+        await new Promise(resolve => setTimeout(resolve, 5000)); // Espera 5 segundos antes de checar novamente
+        jobs = await queue.getJobs(['waiting', 'active']);
+    }
+    console.log('Todos os jobs foram processados!');
+}
 emailQueue.on('error', (err) => {
     console.error('Erro na conexão com Redis:', err);
 });
