@@ -21,10 +21,6 @@ const emailQueue = new bull_1.default('emailQueue', {
     redis: {
         host: '127.0.0.1',
         port: 6379,
-        tls: {
-            rejectUnauthorized: false
-        },
-        enableTLSForSentinelMode: false
     }
 });
 emailQueue.process(async (job) => {
