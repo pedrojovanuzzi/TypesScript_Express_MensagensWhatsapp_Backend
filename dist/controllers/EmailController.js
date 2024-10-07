@@ -223,7 +223,7 @@ class EmailController {
             }
         });
         console.log(clientes);
-        clientes.map(async (client) => {
+        await Promise.all(clientes.map(async (client) => {
             try {
                 let msg = "";
                 const idBoleto = client.uuid_lanc;
@@ -317,7 +317,7 @@ class EmailController {
                 console.log(error);
                 this.logError(error, "N/A", client);
             }
-        });
+        }));
         console.log("Finalizado");
     }
     async DiasAntes5() {
@@ -338,7 +338,7 @@ class EmailController {
             }
         });
         // console.log(clientes);
-        clientes.map(async (client) => {
+        await Promise.all(clientes.map(async (client) => {
             try {
                 let msg = "";
                 const idBoleto = client.uuid_lanc;
@@ -432,7 +432,7 @@ class EmailController {
                 console.log(error);
                 this.logError(error, "N/A", client);
             }
-        });
+        }));
         console.log("Finalizado");
     }
     async DiasDoVencimento() {
@@ -453,7 +453,7 @@ class EmailController {
             }
         });
         // console.log(clientes);
-        clientes.map(async (client) => {
+        await Promise.all(clientes.map(async (client) => {
             try {
                 let msg = "";
                 const idBoleto = client.uuid_lanc;
@@ -548,7 +548,7 @@ class EmailController {
                 // console.log(error);
                 this.logError(error, "N/A", client);
             }
-        });
+        }));
         console.log("Finalizado");
     }
     logError(error, email, cliente) {

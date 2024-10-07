@@ -306,7 +306,7 @@ class EmailController {
         });
         console.log(clientes);
     
-        clientes.map(async (client: any) => {
+        await Promise.all(clientes.map(async (client: any) => {
             try {
                 let msg = "";
     
@@ -412,7 +412,7 @@ class EmailController {
                 console.log(error);
                 this.logError(error, "N/A", client);
             }
-        });
+        }));
     
         console.log("Finalizado");
     }
@@ -440,7 +440,7 @@ class EmailController {
         });
         // console.log(clientes);
 
-        clientes.map(async (client : any) => {
+        await Promise.all(clientes.map(async (client : any) => {
             try {
             let msg = "";
             
@@ -555,7 +555,7 @@ class EmailController {
 
             
             
-        })
+        }))
         console.log("Finalizado");
     }
 
@@ -582,7 +582,7 @@ class EmailController {
         });
         // console.log(clientes);
 
-        clientes.map(async (client : any) => {
+        await Promise.all(clientes.map(async (client : any) => {
             try {
                 let msg = "";
 
@@ -694,7 +694,7 @@ class EmailController {
                 // console.log(error);
                 this.logError(error, "N/A", client);
             }       
-        })
+        }))
         console.log("Finalizado");
     }
 
