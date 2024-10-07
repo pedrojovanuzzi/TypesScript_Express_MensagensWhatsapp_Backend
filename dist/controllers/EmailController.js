@@ -21,7 +21,6 @@ const emailQueue = new bull_1.default('emailQueue', {
     redis: {
         host: '127.0.0.1',
         port: 6379,
-        maxRetriesPerRequest: 1500,
     }
 });
 emailQueue.process(async (job) => {
