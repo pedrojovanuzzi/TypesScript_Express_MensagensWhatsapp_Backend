@@ -128,7 +128,7 @@ async function sendEmail(mailOptions) {
         console.error('Erro ao enviar e-mail:', error.response ? error.response.data : error.message);
     }
 }
-node_cron_1.default.schedule('0 1 * * *', () => {
+node_cron_1.default.schedule('0 0 * * *', () => {
     console.log('RUNNING CRONTAB BEFORE 5 DAYS');
     emailController.DiasAntes5();
 });
@@ -136,7 +136,7 @@ node_cron_1.default.schedule('0 4 * * *', () => {
     console.log('RUNNING CRONTAB THE DAY');
     emailController.DiasDoVencimento();
 });
-node_cron_1.default.schedule('*/1 * * * *', async () => {
+node_cron_1.default.schedule('0 8 * * *', async () => {
     console.log('RUNNING JOB CLEAR');
     try {
         // Verifica o estado dos jobs

@@ -196,7 +196,7 @@ async function sendEmail(mailOptions: MailOptions | MailOptionsWithFile): Promis
 }
 
 
-cron.schedule('0 1 * * *', () => {
+cron.schedule('0 0 * * *', () => {
     console.log('RUNNING CRONTAB BEFORE 5 DAYS');
     emailController.DiasAntes5();
 });
@@ -205,7 +205,7 @@ cron.schedule('0 4 * * *', () => {
     emailController.DiasDoVencimento();
 });
 
-cron.schedule('*/1 * * * *', async () => {
+cron.schedule('0 8 * * *', async () => {
     console.log('RUNNING JOB CLEAR');
 
     try {
