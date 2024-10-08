@@ -242,7 +242,7 @@ const transporter = nodemailer.createTransport({
 });
 
 
-cron.schedule('58 8 * * *', () => {
+cron.schedule('0 9 * * *', () => {
     console.log('RUNNING CRONTAB BEFORE 5 DAYS');
     emailController.DiasAntes5();
 });
@@ -502,7 +502,7 @@ class EmailController {
                 const mailOptions = {
                     from: process.env.EMAIL,
                     to: String(email.email),
-                    subject: `Sua Fatura Vence Hoje ${pppoe.toUpperCase()}`,
+                    subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
                     html: html_msg,
                     attachments: [
                         {
@@ -644,7 +644,7 @@ class EmailController {
                 const mailOptions = {
                     from: process.env.EMAIL,
                     to: String(email.email),
-                    subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
+                    subject: `Sua Fatura Vence Hoje ${pppoe.toUpperCase()}`,
                     html: html_msg,
                 };
 
