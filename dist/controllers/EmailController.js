@@ -13,122 +13,63 @@ const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const ssh2_sftp_client_1 = __importDefault(require("ssh2-sftp-client"));
-const qs_1 = __importDefault(require("qs"));
-const axios_1 = __importDefault(require("axios"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const bull_1 = __importDefault(require("bull"));
 dotenv_1.default.config();
-const emailQueue = new bull_1.default('emailQueue', {
-    redis: {
-        host: '127.0.0.1',
-        port: 6379,
-    }
-});
-emailQueue.process(async (job) => {
-    console.log('Processando email para:', job.data.mailOptions.message.toRecipients[0].emailAddress.address);
-    const mailOptions = job.data.mailOptions;
-    try {
-        await sendEmail(mailOptions);
-        console.log('E-mail enviado com sucesso!');
-        emailQueue.getJobs(['waiting', 'active']).then((jobs) => {
-            console.log('Jobs na fila:', jobs.length);
-        });
-    }
-    catch (error) {
-        console.error('Erro ao enviar e-mail:', error);
-    }
-});
-async function waitUntilQueueEmpty(queue) {
-    let jobs = await queue.getJobs(['waiting', 'active']);
-    // console.log(jobs);
-    while (jobs.length > 0) {
-        console.log(`Ainda há ${jobs.length} jobs a serem processados...`);
-        // Processa cada job pendente chamando sendEmail
-        for (const job of jobs) {
-            const mailOptions = job.data.mailOptions;
-            try {
-                await sendEmail(mailOptions); // Envia o e-mail para cada job
-                console.log(`E-mail enviado com sucesso para: ${mailOptions.message.toRecipients[0].emailAddress.address}`);
-                // Marcar o job como completo no Bull (opcional)
-                await job.moveToCompleted();
-            }
-            catch (error) {
-                if (error instanceof Error) {
-                    console.error(`Erro ao enviar e-mail para: ${mailOptions.message.toRecipients[0].emailAddress.address}: ${error.message}`);
-                    // Marcar o job como falho no Bull (opcional)
-                    await job.moveToFailed({ message: error.message });
-                }
-                else {
-                    console.error('Erro desconhecido ao enviar o e-mail', error);
-                }
-            }
-        }
-        // Espera 5 segundos antes de checar novamente por novos jobs
-        await new Promise(resolve => setTimeout(resolve, 5000));
-        // Verifica novamente se ainda há jobs pendentes
-        jobs = await queue.getJobs(['waiting', 'active']);
-    }
-    console.log('Todos os jobs foram processados!');
-}
-emailQueue.on('error', (err) => {
-    console.error('Erro na conexão com Redis:', err);
-});
-function addEmailToQueue(mailOptions) {
-    emailQueue.add({ mailOptions }, { delay: 10000, attempts: 2 });
-}
 function getBase64File(filePath) {
     const file = fs_1.default.readFileSync(filePath);
     return file.toString('base64');
 }
-async function getToken() {
-    const tokenUrl = `https://login.microsoftonline.com/${process.env.tenantId}/oauth2/v2.0/token`;
-    const data = qs_1.default.stringify({
-        client_id: process.env.OUTLOOK_CLIENT,
-        grant_type: 'refresh_token',
-        refresh_token: process.env.code, // O refresh token que você já possui
-        client_secret: process.env.OUTLOOK_SECRET, // O segredo do cliente
-    });
-    const config = {
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-    };
-    try {
-        const response = await axios_1.default.post(tokenUrl, data, config);
-        return {
-            accessToken: response.data.access_token,
-            refreshToken: response.data.refresh_token
-        };
-    }
-    catch (error) {
-        console.error('Erro ao obter o token Refresh:', error.response ? error.response.data : error.message);
-    }
-}
-async function sendEmail(mailOptions) {
-    const tokenResponse = await getToken();
-    if (!tokenResponse) {
-        console.log("Erro ao obter token de acesso.");
-        return;
-    }
-    const { accessToken, refreshToken } = tokenResponse;
-    console.log("AUTH CODE " + accessToken);
-    console.log("refreshToken " + refreshToken);
-    const url = `https://graph.microsoft.com/v1.0/users/${process.env.OUTLOOK_USER}/sendMail`;
-    try {
-        await axios_1.default.post(url, {
-            message: mailOptions.message
-        }, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-                'Content-Type': 'application/json'
-            }
-        });
-        console.log("E-mail enviado com sucesso!");
-    }
-    catch (error) {
-        console.error('Erro ao enviar e-mail:', error.response ? error.response.data : error.message);
-    }
-}
+// async function getToken(): Promise<TokenResponse | undefined> {
+//     const tokenUrl = `https://login.microsoftonline.com/${process.env.tenantId}/oauth2/v2.0/token`;
+//     const data = qs.stringify({
+//         client_id: process.env.OUTLOOK_CLIENT,
+//         grant_type: 'refresh_token',
+//         refresh_token: process.env.code, // O refresh token que você já possui
+//         client_secret: process.env.OUTLOOK_SECRET, // O segredo do cliente
+//     });
+//     const config = {
+//         headers: {
+//             'Content-Type': 'application/x-www-form-urlencoded',
+//         },
+//     };
+//     try {
+//         const response = await axios.post(tokenUrl, data, config);
+//         return {
+//             accessToken: response.data.access_token,
+//             refreshToken: response.data.refresh_token
+//         };
+//     } catch (error: any) {
+//         console.error('Erro ao obter o token Refresh:', error.response ? error.response.data : error.message);
+//     }
+// }
+// async function sendEmail(mailOptions: MailOptions | MailOptionsWithFile): Promise<void> {
+//     const tokenResponse = await getToken();
+//     if (!tokenResponse) {
+//         console.log("Erro ao obter token de acesso.");
+//         return;
+//     }
+//     const { accessToken, refreshToken } = tokenResponse;
+//     console.log("AUTH CODE " + accessToken);
+//     console.log("refreshToken " + refreshToken);
+//     const url = `https://graph.microsoft.com/v1.0/users/${process.env.OUTLOOK_USER}/sendMail`;
+//     try {
+//         await axios.post(
+//             url,
+//             {
+//                 message: mailOptions.message              
+//             },
+//             {
+//                 headers: {
+//                     Authorization: `Bearer ${accessToken}`,
+//                     'Content-Type': 'application/json'
+//                 }
+//             }
+//         );
+//         console.log("E-mail enviado com sucesso!");
+//     } catch (error: any) {
+//         console.error('Erro ao enviar e-mail:', error.response ? error.response.data : error.message);
+//     }
+// }
 const transporter = nodemailer_1.default.createTransport({
     host: 'smtp-mail.outlook.com',
     port: 587, // Porta SMTP para envio de e-mails
@@ -152,20 +93,19 @@ node_cron_1.default.schedule('0 4 * * *', () => {
     console.log('RUNNING CRONTAB THE DAY');
     emailController.DiasDoVencimento();
 });
-node_cron_1.default.schedule('0 8 * * *', async () => {
-    console.log('RUNNING JOB CLEAR');
-    try {
-        // Verifica o estado dos jobs
-        const jobs = await emailQueue.getJobs(['waiting', 'active']);
-        console.log('Jobs na fila:', jobs.length);
-        // Aguarda até que a fila esteja vazia
-        await waitUntilQueueEmpty(emailQueue);
-        console.log('Queue processada com sucesso!');
-    }
-    catch (error) {
-        console.error('Erro ao processar a fila:', error);
-    }
-});
+// cron.schedule('0 8 * * *', async () => {
+//     console.log('RUNNING JOB CLEAR');
+//     try {
+//         // Verifica o estado dos jobs
+//         const jobs = await emailQueue.getJobs(['waiting','active']);
+//         console.log('Jobs na fila:', jobs.length);
+//         // Aguarda até que a fila esteja vazia
+//         await waitUntilQueueEmpty(emailQueue);
+//         console.log('Queue processada com sucesso!');
+//     } catch (error) {
+//         console.error('Erro ao processar a fila:', error);
+//     }
+// });
 node_cron_1.default.schedule('*/1 * * * *', () => {
     console.log('RUNNING CRONTAB TEST');
     emailController.TesteEmail();
@@ -353,34 +293,21 @@ class EmailController {
                 const pdfDownload = await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
                 if (email?.email && pdfDownload) {
                     const mailOptions = {
-                        message: {
-                            subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
-                            body: {
-                                contentType: "HTML",
-                                content: html_msg
-                            },
-                            toRecipients: [
-                                {
-                                    emailAddress: {
-                                        address: String(email.email)
-                                    }
-                                }
-                            ],
-                            attachments: [
-                                {
-                                    '@odata.type': '#microsoft.graph.fileAttachment',
-                                    name: "Boleto.pdf",
-                                    contentType: 'application/pdf',
-                                    contentBytes: getBase64File(localPdfPath)
-                                }
-                            ]
-                        },
-                        saveToSentItems: "true"
+                        from: process.env.EMAIL,
+                        to: String(email.email),
+                        subject: `Sua Fatura Vence Hoje ${pppoe.toUpperCase()}`,
+                        html: html_msg,
+                        attachments: [
+                            {
+                                filename: 'Boleto.pdf',
+                                path: localPdfPath // Especifica o caminho local do PDF baixado
+                            }
+                        ]
                     };
                     // console.log(msg);
                     console.log(mailOptions);
                     try {
-                        addEmailToQueue(mailOptions);
+                        transporter.sendMail(mailOptions);
                     }
                     catch (error) {
                         console.log(error);
@@ -389,25 +316,14 @@ class EmailController {
                 }
                 else if (email?.email) {
                     const mailOptions = {
-                        message: {
-                            subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
-                            body: {
-                                contentType: "HTML",
-                                content: html_msg
-                            },
-                            toRecipients: [
-                                {
-                                    emailAddress: {
-                                        address: String(email.email)
-                                    }
-                                }
-                            ],
-                        },
-                        saveToSentItems: "true"
+                        from: process.env.EMAIL,
+                        to: String(email.email),
+                        subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
+                        html: html_msg,
                     };
                     console.log(mailOptions);
                     try {
-                        addEmailToQueue(mailOptions);
+                        transporter.sendMail(mailOptions);
                         this.logSend(email.email, client);
                     }
                     catch (error) {
@@ -468,34 +384,21 @@ class EmailController {
                 const pdfDownload = await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
                 if (email?.email && pdfDownload) {
                     const mailOptions = {
-                        message: {
-                            subject: `Sua Fatura Vence Hoje!`,
-                            body: {
-                                contentType: "HTML",
-                                content: html_msg
-                            },
-                            toRecipients: [
-                                {
-                                    emailAddress: {
-                                        address: String(email.email)
-                                    }
-                                }
-                            ],
-                            attachments: [
-                                {
-                                    '@odata.type': '#microsoft.graph.fileAttachment',
-                                    name: "Boleto.pdf",
-                                    contentType: 'application/pdf',
-                                    contentBytes: getBase64File(localPdfPath)
-                                }
-                            ]
-                        },
-                        saveToSentItems: "true"
+                        from: process.env.EMAIL,
+                        to: String(email.email),
+                        subject: `Sua Fatura Vence Hoje ${pppoe.toUpperCase()}`,
+                        html: html_msg,
+                        attachments: [
+                            {
+                                filename: 'Boleto.pdf',
+                                path: localPdfPath // Especifica o caminho local do PDF baixado
+                            }
+                        ]
                     };
                     // console.log(msg);
                     console.log(mailOptions);
                     try {
-                        addEmailToQueue(mailOptions);
+                        transporter.sendMail(mailOptions);
                     }
                     catch (error) {
                         console.log(error);
@@ -503,27 +406,15 @@ class EmailController {
                     }
                 }
                 else if (email?.email) {
-                    // console.log(msg);
                     const mailOptions = {
-                        message: {
-                            subject: `Sua Fatura Vence Hoje!`,
-                            body: {
-                                contentType: "HTML",
-                                content: html_msg
-                            },
-                            toRecipients: [
-                                {
-                                    emailAddress: {
-                                        address: String(email.email)
-                                    }
-                                }
-                            ],
-                        },
-                        saveToSentItems: "true"
+                        from: process.env.EMAIL,
+                        to: String(email.email),
+                        subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
+                        html: html_msg,
                     };
                     console.log(mailOptions);
                     try {
-                        addEmailToQueue(mailOptions);
+                        transporter.sendMail(mailOptions);
                         this.logSend(email.email, client);
                     }
                     catch (error) {
