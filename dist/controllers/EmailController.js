@@ -166,7 +166,7 @@ class EmailController {
         const anoAtual = date.getFullYear(); // Obtém o ano atual
         const MesDeHoje = date.getMonth() + 1; // getMonth retorna de 0 a 11, então adicionamos 1
         const diaHoje = date.getDate(); // getDate retorna o dia do mês
-        const diaVencimento = diaHoje;
+        const diaVencimento = diaHoje + 2;
         console.log(MesDeHoje);
         console.log(diaHoje);
         const resultados = ds_1.AppDataSource.getRepository(Record_1.Record);
