@@ -85,7 +85,7 @@ const transporter = nodemailer_1.default.createTransport({
         ciphers: 'SSLv3'
     }
 });
-node_cron_1.default.schedule('0 9 * * *', () => {
+node_cron_1.default.schedule('0 0 * * *', () => {
     console.log('RUNNING CRONTAB BEFORE 5 DAYS');
     emailController.DiasAntes5();
 });
@@ -202,7 +202,7 @@ class EmailController {
                 const pdfDownload = await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
                 if (email?.email && pdfDownload) {
                     const mailOptions = {
-                        from: process.env.EMAIL,
+                        from: process.env.OUTLOOK_USER,
                         to: String(email.email),
                         subject: `Sua Fatura Vence Hoje ${pppoe.toUpperCase()}`,
                         html: html_msg,
@@ -224,7 +224,7 @@ class EmailController {
                 }
                 else if (email?.email) {
                     const mailOptions = {
-                        from: process.env.EMAIL,
+                        from: process.env.OUTLOOK_USER,
                         to: String(email.email),
                         subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
                         html: html_msg,
@@ -257,7 +257,7 @@ class EmailController {
         const anoAtual = date.getFullYear(); // Obtém o ano atual
         const MesDeHoje = date.getMonth() + 1; // getMonth retorna de 0 a 11, então adicionamos 1
         const diaHoje = date.getDate(); // getDate retorna o dia do mês
-        const diaVencimento = diaHoje + 2;
+        const diaVencimento = diaHoje + 5;
         console.log(MesDeHoje);
         console.log(diaHoje);
         const resultados = ds_1.AppDataSource.getRepository(Record_1.Record);
@@ -293,7 +293,7 @@ class EmailController {
                 const pdfDownload = await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
                 if (email?.email && pdfDownload) {
                     const mailOptions = {
-                        from: process.env.EMAIL,
+                        from: process.env.OUTLOOK_USER,
                         to: String(email.email),
                         subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
                         html: html_msg,
@@ -316,7 +316,7 @@ class EmailController {
                 }
                 else if (email?.email) {
                     const mailOptions = {
-                        from: process.env.EMAIL,
+                        from: process.env.OUTLOOK_USER,
                         to: String(email.email),
                         subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
                         html: html_msg,
@@ -384,7 +384,7 @@ class EmailController {
                 const pdfDownload = await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
                 if (email?.email && pdfDownload) {
                     const mailOptions = {
-                        from: process.env.EMAIL,
+                        from: process.env.OUTLOOK_USER,
                         to: String(email.email),
                         subject: `Sua Fatura Vence Hoje ${pppoe.toUpperCase()}`,
                         html: html_msg,
@@ -407,7 +407,7 @@ class EmailController {
                 }
                 else if (email?.email) {
                     const mailOptions = {
-                        from: process.env.EMAIL,
+                        from: process.env.OUTLOOK_USER,
                         to: String(email.email),
                         subject: `Sua Fatura Vence Hoje ${pppoe.toUpperCase()}`,
                         html: html_msg,
