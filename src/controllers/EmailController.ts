@@ -86,6 +86,35 @@ dotenv.config();
 //     emailQueue.add({ mailOptions },{delay: 10000, attempts: 2});
 // }
 
+
+// const mailOptions = {
+//     message: {
+//         subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
+//         body: {
+//             contentType: "HTML",
+//             content: html_msg
+//         },
+//         toRecipients: [
+//             {
+//                 emailAddress: {
+//                     address: String(email.email)
+//                 }
+//             }
+//         ],
+//         attachments: [
+//             {
+//                 '@odata.type': '#microsoft.graph.fileAttachment',
+//                 name: "Boleto.pdf",
+//                 contentType: 'application/pdf',
+//                 contentBytes: getBase64File(localPdfPath)
+//             }
+//         ]
+//     },
+//     saveToSentItems: "true"
+// }
+
+
+
 interface TokenResponse {
     accessToken: string;
     refreshToken: string;
