@@ -11,6 +11,7 @@ const ds_1 = require("../database/ds");
 const typeorm_1 = require("typeorm");
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
+const nodemailer_1 = __importDefault(require("nodemailer"));
 const ssh2_sftp_client_1 = __importDefault(require("ssh2-sftp-client"));
 const qs_1 = __importDefault(require("qs"));
 const axios_1 = __importDefault(require("axios"));
@@ -128,6 +129,21 @@ async function sendEmail(mailOptions) {
         console.error('Erro ao enviar e-mail:', error.response ? error.response.data : error.message);
     }
 }
+const transporter = nodemailer_1.default.createTransport({
+    host: 'smtp-mail.outlook.com',
+    port: 587, // Porta SMTP para envio de e-mails
+    secure: false, // true para 465, false para outras portas como 587
+    auth: {
+        user: process.env.OUTLOOK_USER, // Seu e-mail do Outlook
+        pass: process.env.OUTLOOK_PASS, // Sua senha do e-mail
+    },
+    pool: true, // Ativa o uso de pool de conexões
+    maxConnections: 1, // Limita o número de conexões simultâneas
+    rateLimit: 1, // Limita o número de mensagens por segundo
+    tls: {
+        ciphers: 'SSLv3'
+    }
+});
 node_cron_1.default.schedule('0 0 * * *', () => {
     console.log('RUNNING CRONTAB BEFORE 5 DAYS');
     emailController.DiasAntes5();
@@ -150,10 +166,10 @@ node_cron_1.default.schedule('0 8 * * *', async () => {
         console.error('Erro ao processar a fila:', error);
     }
 });
-// cron.schedule('*/1 * * * *', () => {
-//     console.log('RUNNING CRONTAB TEST');
-//     emailController.TesteEmail();
-// })
+node_cron_1.default.schedule('*/1 * * * *', () => {
+    console.log('RUNNING CRONTAB TEST');
+    emailController.TesteEmail();
+});
 const pdfPath = '/opt/mk-auth/print_pdf/boletos/'; // Caminho do arquivo no sistema de arquivos
 class EmailController {
     msg(msg, formattedDate, login, linhadig, pix, endereco, numero) {
@@ -246,33 +262,20 @@ class EmailController {
                 const pdfDownload = await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
                 if (email?.email && pdfDownload) {
                     const mailOptions = {
-                        message: {
-                            subject: `Sua Fatura Vence Hoje!`,
-                            body: {
-                                contentType: "HTML",
-                                content: html_msg
-                            },
-                            toRecipients: [
-                                {
-                                    emailAddress: {
-                                        address: String(email.email)
-                                    }
-                                }
-                            ],
-                            attachments: [
-                                {
-                                    '@odata.type': '#microsoft.graph.fileAttachment',
-                                    name: "Boleto.pdf",
-                                    contentType: 'application/pdf',
-                                    contentBytes: getBase64File(localPdfPath)
-                                }
-                            ]
-                        },
-                        saveToSentItems: "true"
+                        from: process.env.EMAIL,
+                        to: String(email.email),
+                        subject: `Sua Fatura Vence Hoje ${pppoe.toUpperCase()}`,
+                        html: html_msg,
+                        attachments: [
+                            {
+                                filename: 'Boleto.pdf',
+                                path: localPdfPath // Especifica o caminho local do PDF baixado
+                            }
+                        ]
                     };
                     console.log(mailOptions);
                     try {
-                        addEmailToQueue(mailOptions);
+                        await transporter.sendMail(mailOptions);
                     }
                     catch (error) {
                         console.log(error);
@@ -281,25 +284,14 @@ class EmailController {
                 }
                 else if (email?.email) {
                     const mailOptions = {
-                        message: {
-                            subject: `Sua Fatura Vence Hoje!`,
-                            body: {
-                                contentType: "HTML",
-                                content: html_msg
-                            },
-                            toRecipients: [
-                                {
-                                    emailAddress: {
-                                        address: String(email.email)
-                                    }
-                                }
-                            ],
-                        },
-                        saveToSentItems: "true"
+                        from: process.env.EMAIL,
+                        to: String(email.email),
+                        subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
+                        html: html_msg,
                     };
                     console.log(mailOptions);
                     try {
-                        addEmailToQueue(mailOptions);
+                        await transporter.sendMail(mailOptions);
                     }
                     catch (error) {
                         console.log(error);
