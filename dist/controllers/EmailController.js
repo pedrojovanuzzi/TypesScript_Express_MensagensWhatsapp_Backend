@@ -106,10 +106,10 @@ node_cron_1.default.schedule('0 4 * * *', () => {
 //         console.error('Erro ao processar a fila:', error);
 //     }
 // });
-node_cron_1.default.schedule('*/1 * * * *', () => {
-    console.log('RUNNING CRONTAB TEST');
-    emailController.TesteEmail();
-});
+// cron.schedule('*/1 * * * *', () => {
+//     console.log('RUNNING CRONTAB TEST');
+//     emailController.TesteEmail();
+// })
 const pdfPath = '/opt/mk-auth/print_pdf/boletos/'; // Caminho do arquivo no sistema de arquivos
 class EmailController {
     msg(msg, formattedDate, login, linhadig, pix, endereco, numero) {
@@ -166,7 +166,7 @@ class EmailController {
         const anoAtual = date.getFullYear(); // Obtém o ano atual
         const MesDeHoje = date.getMonth() + 1; // getMonth retorna de 0 a 11, então adicionamos 1
         const diaHoje = date.getDate(); // getDate retorna o dia do mês
-        const diaVencimento = diaHoje + 2;
+        const diaVencimento = diaHoje;
         console.log(MesDeHoje);
         console.log(diaHoje);
         const resultados = ds_1.AppDataSource.getRepository(Record_1.Record);
