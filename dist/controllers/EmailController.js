@@ -15,6 +15,7 @@ const nodemailer_1 = __importDefault(require("nodemailer"));
 const ssh2_sftp_client_1 = __importDefault(require("ssh2-sftp-client"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const transporter = nodemailer_1.default.createTransport({
     host: 'smtp.mailgun.org',
     port: 587, // Porta SMTP para envio de e-mails
@@ -25,8 +26,6 @@ const transporter = nodemailer_1.default.createTransport({
     },
     pool: true, // Ativa o uso de pool de conexões
     maxConnections: 1, // Limita o número de conexões simultâneas
-    rateLimit: 1, // Limita o número de mensagens por segundo
-    rateDelta: 36000,
     tls: {
         ciphers: 'SSLv3'
     }
@@ -256,6 +255,7 @@ class EmailController {
                     console.log("Sem Email Cadastrado");
                     this.logError("Sem Email Cadastrado", "Email", client);
                 }
+                await sleep(36000);
             }
             catch (error) {
                 console.log(error);
@@ -340,6 +340,7 @@ class EmailController {
                     console.log("Sem Email Cadastrado");
                     this.logError("Sem Email Cadastrado", "Email", client);
                 }
+                await sleep(36000);
             }
             catch (error) {
                 // console.log(error);

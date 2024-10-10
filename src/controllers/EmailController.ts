@@ -17,7 +17,7 @@ import Queue from 'bull';
 
 dotenv.config();
 
-
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const transporter = nodemailer.createTransport({
     host: 'smtp.mailgun.org',
@@ -29,8 +29,6 @@ const transporter = nodemailer.createTransport({
     },
     pool: true, // Ativa o uso de pool de conexões
     maxConnections: 1, // Limita o número de conexões simultâneas
-    rateLimit: 1, // Limita o número de mensagens por segundo
-    rateDelta: 36000,
     tls: {
         ciphers: 'SSLv3'
     }
@@ -327,6 +325,9 @@ class EmailController {
                 console.log("Sem Email Cadastrado");
                 this.logError("Sem Email Cadastrado", "Email", client);
             }
+
+            await sleep(36000);
+            
             } catch (error) {
                 console.log(error);
                 this.logError(error, "N/A", client);
@@ -436,6 +437,7 @@ class EmailController {
                 try {
                     transporter.sendMail(mailOptions); 
                     this.logSend(email.email, client);
+                    
                 } catch (error) {
                     // console.log(error);
                     this.logError(error, email?.email, client);
@@ -445,6 +447,8 @@ class EmailController {
                 console.log("Sem Email Cadastrado");
                 this.logError("Sem Email Cadastrado", "Email", client);
             }
+
+            await sleep(36000);
             } catch (error) {
                 // console.log(error);
                 this.logError(error, "N/A", client);
