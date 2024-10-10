@@ -30,7 +30,7 @@ const transporter = nodemailer.createTransport({
     pool: true, // Ativa o uso de pool de conexões
     maxConnections: 1, // Limita o número de conexões simultâneas
     rateLimit: 1, // Limita o número de mensagens por segundo
-    rateDelta: 6000,
+    rateDelta: 36000,
     tls: {
         ciphers: 'SSLv3'
     }
