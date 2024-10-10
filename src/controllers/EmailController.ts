@@ -49,10 +49,6 @@ cron.schedule('0 0 * * *', () => {
 //     emailController.TesteEmail();
 // })
 
-cron.schedule('*/2 * * * *', () => {
-    console.log('RUNNING SLEEP TEST');
-    emailController.TestDelay();
-})
 
 const pdfPath = '/opt/mk-auth/print_pdf/boletos/'; // Caminho do arquivo no sistema de arquivos
 
@@ -219,12 +215,6 @@ class EmailController {
         }));
     
         
-    }
-
-    async TestDelay(){
-        console.log("TESTANDO TEMPO");
-        await sleep(36000);
-        console.log("DEU CERTO");
     }
 
     async DiasAntes5() {

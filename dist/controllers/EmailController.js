@@ -42,10 +42,6 @@ node_cron_1.default.schedule('0 0 * * *', () => {
 //     console.log('RUNNING CRONTAB TEST');
 //     emailController.TesteEmail();
 // })
-node_cron_1.default.schedule('*/2 * * * *', () => {
-    console.log('RUNNING SLEEP TEST');
-    emailController.TestDelay();
-});
 const pdfPath = '/opt/mk-auth/print_pdf/boletos/'; // Caminho do arquivo no sistema de arquivos
 class EmailController {
     msg(msg, formattedDate, login, linhadig, pix, endereco, numero) {
@@ -181,11 +177,6 @@ class EmailController {
                 this.logError(error, "N/A", client);
             }
         }));
-    }
-    async TestDelay() {
-        console.log("TESTANDO TEMPO");
-        await sleep(36000);
-        console.log("DEU CERTO");
     }
     async DiasAntes5() {
         const date = new Date();
