@@ -37,7 +37,7 @@ const transporter = nodemailer.createTransport({
 });
 
 
-cron.schedule('0 6 * * *', () => {
+cron.schedule('0 8 * * *', () => {
     console.log('RUNNING CRONTAB BEFORE 5 DAYS');
     emailController.DiasAntes5();
 });

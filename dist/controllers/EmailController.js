@@ -31,7 +31,7 @@ const transporter = nodemailer_1.default.createTransport({
         ciphers: 'SSLv3'
     }
 });
-node_cron_1.default.schedule('0 6 * * *', () => {
+node_cron_1.default.schedule('0 8 * * *', () => {
     console.log('RUNNING CRONTAB BEFORE 5 DAYS');
     emailController.DiasAntes5();
 });
