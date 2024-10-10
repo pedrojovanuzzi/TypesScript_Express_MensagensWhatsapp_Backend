@@ -51,7 +51,7 @@ function getBase64File(filePath) {
 //     const { accessToken, refreshToken } = tokenResponse;
 //     console.log("AUTH CODE " + accessToken);
 //     console.log("refreshToken " + refreshToken);
-//     const url = `https://graph.microsoft.com/v1.0/users/${process.env.OUTLOOK_USER}/sendMail`;
+//     const url = `https://graph.microsoft.com/v1.0/users/${process.env.MAILGUNNER_USER}/sendMail`;
 //     try {
 //         await axios.post(
 //             url,
@@ -202,7 +202,7 @@ class EmailController {
                 const pdfDownload = await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
                 if (email?.email && pdfDownload) {
                     const mailOptions = {
-                        from: process.env.OUTLOOK_USER,
+                        from: process.env.MAILGUNNER_USER,
                         to: String(email.email),
                         subject: `Sua Fatura Vence Hoje ${pppoe.toUpperCase()}`,
                         html: html_msg,
@@ -224,7 +224,7 @@ class EmailController {
                 }
                 else if (email?.email) {
                     const mailOptions = {
-                        from: process.env.OUTLOOK_USER,
+                        from: process.env.MAILGUNNER_USER,
                         to: String(email.email),
                         subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
                         html: html_msg,
@@ -293,7 +293,7 @@ class EmailController {
                 const pdfDownload = await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
                 if (email?.email && pdfDownload) {
                     const mailOptions = {
-                        from: process.env.OUTLOOK_USER,
+                        from: process.env.MAILGUNNER_USER,
                         to: String(email.email),
                         subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
                         html: html_msg,
@@ -316,7 +316,7 @@ class EmailController {
                 }
                 else if (email?.email) {
                     const mailOptions = {
-                        from: process.env.OUTLOOK_USER,
+                        from: process.env.MAILGUNNER_USER,
                         to: String(email.email),
                         subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
                         html: html_msg,
@@ -384,7 +384,7 @@ class EmailController {
                 const pdfDownload = await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
                 if (email?.email && pdfDownload) {
                     const mailOptions = {
-                        from: process.env.OUTLOOK_USER,
+                        from: process.env.MAILGUNNER_USER,
                         to: String(email.email),
                         subject: `Sua Fatura Vence Hoje ${pppoe.toUpperCase()}`,
                         html: html_msg,
@@ -407,7 +407,7 @@ class EmailController {
                 }
                 else if (email?.email) {
                     const mailOptions = {
-                        from: process.env.OUTLOOK_USER,
+                        from: process.env.MAILGUNNER_USER,
                         to: String(email.email),
                         subject: `Sua Fatura Vence Hoje ${pppoe.toUpperCase()}`,
                         html: html_msg,
