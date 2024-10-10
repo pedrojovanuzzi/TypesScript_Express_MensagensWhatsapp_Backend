@@ -17,212 +17,6 @@ import Queue from 'bull';
 
 dotenv.config();
 
-//     const emailQueue = new Queue('emailQueue', {
-//         redis:{
-//             host: '127.0.0.1',
-//             port: 6379,
-//         }
-//     });
-
-// emailQueue.process(async (job) => {
-//     console.log('Processando email para:', job.data.mailOptions.message.toRecipients[0].emailAddress.address);
-//     const mailOptions = job.data.mailOptions;
-//     try {
-//         await sendEmail(mailOptions);
-//         console.log('E-mail enviado com sucesso!');
-//         emailQueue.getJobs(['waiting','active']).then((jobs) => {
-//             console.log('Jobs na fila:', jobs.length);
-//         });
-//     } catch (error) {
-//         console.error('Erro ao enviar e-mail:', error);
-//     }
-// });
-
-// async function waitUntilQueueEmpty(queue : any) {
-//     let jobs = await queue.getJobs(['waiting', 'active']);
-    
-//     // console.log(jobs);
-    
-
-//     while (jobs.length > 0) {
-//         console.log(`Ainda há ${jobs.length} jobs a serem processados...`);
-
-//         // Processa cada job pendente chamando sendEmail
-//         for (const job of jobs) {
-//             const mailOptions = job.data.mailOptions;
-//             try {
-//                 await sendEmail(mailOptions); // Envia o e-mail para cada job
-//                 console.log(`E-mail enviado com sucesso para: ${mailOptions.message.toRecipients[0].emailAddress.address}`);
-                
-//                 // Marcar o job como completo no Bull (opcional)
-//                 await job.moveToCompleted();
-//             } catch (error) {
-//                 if (error instanceof Error) {
-//                     console.error(`Erro ao enviar e-mail para: ${mailOptions.message.toRecipients[0].emailAddress.address}: ${error.message}`);
-                    
-//                     // Marcar o job como falho no Bull (opcional)
-//                     await job.moveToFailed({ message: error.message });
-//                 } else {
-//                     console.error('Erro desconhecido ao enviar o e-mail', error);
-//                 }
-//             }
-//         }
-
-//         // Espera 5 segundos antes de checar novamente por novos jobs
-//         await new Promise(resolve => setTimeout(resolve, 5000));
-
-//         // Verifica novamente se ainda há jobs pendentes
-//         jobs = await queue.getJobs(['waiting', 'active']);
-//     }
-
-//     console.log('Todos os jobs foram processados!');
-// }
-
-// emailQueue.on('error', (err) => {
-//     console.error('Erro na conexão com Redis:', err);
-// });
-
-// function addEmailToQueue(mailOptions: MailOptions | MailOptionsWithFile) {
-//     emailQueue.add({ mailOptions },{delay: 10000, attempts: 2});
-// }
-
-
-// const mailOptions = {
-//     message: {
-//         subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
-//         body: {
-//             contentType: "HTML",
-//             content: html_msg
-//         },
-//         toRecipients: [
-//             {
-//                 emailAddress: {
-//                     address: String(email.email)
-//                 }
-//             }
-//         ],
-//         attachments: [
-//             {
-//                 '@odata.type': '#microsoft.graph.fileAttachment',
-//                 name: "Boleto.pdf",
-//                 contentType: 'application/pdf',
-//                 contentBytes: getBase64File(localPdfPath)
-//             }
-//         ]
-//     },
-//     saveToSentItems: "true"
-// }
-
-
-
-interface TokenResponse {
-    accessToken: string;
-    refreshToken: string;
-}
-
-interface MailOptions {
-    message: {
-        subject: string;
-        body: {
-            contentType: "HTML";
-            content: string;
-        };
-        toRecipients: Array<{
-            emailAddress: {
-                address: string;
-            };
-        }>; 
-    };
-    saveToSentItems: "true";
-}
-
-interface MailOptionsWithFile {
-    message: {
-        subject: string;
-        body: {
-            contentType: "HTML";
-            content: string;
-        };
-        toRecipients: Array<{
-            emailAddress: {
-                address: string;
-            };
-        }>;
-        attachments: [
-            {
-                '@odata.type': '#microsoft.graph.fileAttachment',
-                name: "Boleto.pdf",
-                contentType: 'application/pdf',
-                contentBytes: string
-            }
-        ]   
-    };
-    saveToSentItems: "true";
-}
-
-function getBase64File(filePath: string): string {
-    const file = fs.readFileSync(filePath);
-    return file.toString('base64');
-}
-
-// async function getToken(): Promise<TokenResponse | undefined> {
-//     const tokenUrl = `https://login.microsoftonline.com/${process.env.tenantId}/oauth2/v2.0/token`;
-
-//     const data = qs.stringify({
-//         client_id: process.env.OUTLOOK_CLIENT,
-//         grant_type: 'refresh_token',
-//         refresh_token: process.env.code, // O refresh token que você já possui
-//         client_secret: process.env.OUTLOOK_SECRET, // O segredo do cliente
-//     });
-
-//     const config = {
-//         headers: {
-//             'Content-Type': 'application/x-www-form-urlencoded',
-//         },
-//     };
-
-//     try {
-//         const response = await axios.post(tokenUrl, data, config);
-//         return {
-//             accessToken: response.data.access_token,
-//             refreshToken: response.data.refresh_token
-//         };
-//     } catch (error: any) {
-//         console.error('Erro ao obter o token Refresh:', error.response ? error.response.data : error.message);
-//     }
-// }
-
-// async function sendEmail(mailOptions: MailOptions | MailOptionsWithFile): Promise<void> {
-//     const tokenResponse = await getToken();
-//     if (!tokenResponse) {
-//         console.log("Erro ao obter token de acesso.");
-//         return;
-//     }
-
-//     const { accessToken, refreshToken } = tokenResponse;
-//     console.log("AUTH CODE " + accessToken);
-//     console.log("refreshToken " + refreshToken);
-
-//     const url = `https://graph.microsoft.com/v1.0/users/${process.env.MAILGUNNER_USER}/sendMail`;
-
-//     try {
-//         await axios.post(
-//             url,
-//             {
-//                 message: mailOptions.message              
-//             },
-//             {
-//                 headers: {
-//                     Authorization: `Bearer ${accessToken}`,
-//                     'Content-Type': 'application/json'
-//                 }
-//             }
-//         );
-//         console.log("E-mail enviado com sucesso!");
-//     } catch (error: any) {
-//         console.error('Erro ao enviar e-mail:', error.response ? error.response.data : error.message);
-//     }
-// }
 
 
 const transporter = nodemailer.createTransport({
@@ -251,22 +45,6 @@ cron.schedule('0 4 * * *', () => {
     console.log('RUNNING CRONTAB THE DAY');
     emailController.DiasDoVencimento();
 });
-
-// cron.schedule('0 8 * * *', async () => {
-//     console.log('RUNNING JOB CLEAR');
-
-//     try {
-//         // Verifica o estado dos jobs
-//         const jobs = await emailQueue.getJobs(['waiting','active']);
-//         console.log('Jobs na fila:', jobs.length);
-
-//         // Aguarda até que a fila esteja vazia
-//         await waitUntilQueueEmpty(emailQueue);
-//         console.log('Queue processada com sucesso!');
-//     } catch (error) {
-//         console.error('Erro ao processar a fila:', error);
-//     }
-// });
 
 // cron.schedule('*/1 * * * *', () => {
 //     console.log('RUNNING CRONTAB TEST');
@@ -339,8 +117,8 @@ class EmailController {
         const diaHoje = date.getDate(); // getDate retorna o dia do mês
         const diaVencimento = diaHoje;
     
-        console.log(MesDeHoje);
-        console.log(diaHoje);
+        
+        
     
         const resultados = AppDataSource.getRepository(Record);
         const clientes = await resultados.find({
@@ -377,7 +155,7 @@ class EmailController {
                 const ftpUser = String(process.env.USERNAME_FTP); // ajuste com suas credenciais
                 const ftpPassword = String(process.env.PASSWORD_FTP); // ajuste com suas credenciais
                 const remotePdfPath = `${pdfPath}${idBoleto}.pdf`; // ajustado para o ID do cliente
-                console.log("RemotePDF: " + remotePdfPath);
+                
                 
                 const localPdfPath = path.join(__dirname, ".." , "..", 'temp', `${idBoleto}.pdf`); // Caminho local temporário para salvar o PDF
 
@@ -399,7 +177,7 @@ class EmailController {
                         ]
                     };
     
-                    console.log(mailOptions);
+                    
     
                     try {
                         await transporter.sendMail(mailOptions);
@@ -416,7 +194,7 @@ class EmailController {
                         html: html_msg,
                     };
     
-                    console.log(mailOptions);
+                    
     
                     try {
                         await transporter.sendMail(mailOptions);
@@ -437,7 +215,7 @@ class EmailController {
             }
         }));
     
-        console.log("Finalizado");
+        
     }
 
     async DiasAntes5() {
@@ -448,8 +226,8 @@ class EmailController {
         const diaVencimento = diaHoje + 5;
         
 
-        console.log(MesDeHoje);
-        console.log(diaHoje);
+        
+        
         
 
         const resultados = AppDataSource.getRepository(Record);
@@ -461,7 +239,9 @@ class EmailController {
                 status: Raw(alias => `${alias} != 'pago'`)
             }
         });
-        // console.log(clientes);
+        
+        console.log("Quantidade de Clientes: " + clientes.length);
+        
 
         await Promise.all(clientes.map(async (client : any) => {
             try {
@@ -490,7 +270,7 @@ class EmailController {
             const ftpUser = String(process.env.USERNAME_FTP); // ajuste com suas credenciais
             const ftpPassword = String(process.env.PASSWORD_FTP); // ajuste com suas credenciais
             const remotePdfPath = `${pdfPath}${idBoleto}.pdf`; // ajustado para o ID do cliente
-            console.log("RemotePDF: " + remotePdfPath);
+            
             
             const localPdfPath = path.join(__dirname, ".." , "..", 'temp', `${idBoleto}.pdf`); // Caminho local temporário para salvar o PDF
 
@@ -513,9 +293,9 @@ class EmailController {
                     ]
                 };
                 
-                // console.log(msg);
+                
 
-                console.log(mailOptions);
+                
 
                 try {
                     transporter.sendMail(mailOptions);
@@ -533,7 +313,7 @@ class EmailController {
                     html: html_msg,
                 };
 
-                console.log(mailOptions);
+                
 
                 try {
                     transporter.sendMail(mailOptions);
@@ -555,7 +335,7 @@ class EmailController {
             
             
         }))
-        console.log("Finalizado");
+        
     }
 
     async DiasDoVencimento() {
@@ -566,8 +346,8 @@ class EmailController {
         const diaVencimento = diaHoje;
         
 
-        console.log(MesDeHoje);
-        console.log(diaHoje);
+        
+        
         
 
         const resultados = AppDataSource.getRepository(Record);
@@ -579,7 +359,8 @@ class EmailController {
                 status: Raw(alias => `${alias} != 'pago'`)
             }
         });
-        // console.log(clientes);
+        
+        console.log("Quantidade de Clientes: " + clientes.length);
 
         await Promise.all(clientes.map(async (client : any) => {
             try {
@@ -608,7 +389,7 @@ class EmailController {
             const ftpUser = String(process.env.USERNAME_FTP); // ajuste com suas credenciais
             const ftpPassword = String(process.env.PASSWORD_FTP); // ajuste com suas credenciais
             const remotePdfPath = `${pdfPath}${idBoleto}.pdf`; // ajustado para o ID do cliente
-            console.log("RemotePDF: " + remotePdfPath);
+            
             
             const localPdfPath = path.join(__dirname, ".." , "..", 'temp', `${idBoleto}.pdf`); // Caminho local temporário para salvar o PDF
 
@@ -629,9 +410,9 @@ class EmailController {
                     ]
                 };
                 
-                // console.log(msg);
+                
 
-                console.log(mailOptions);
+                
 
                 try {
                     transporter.sendMail(mailOptions); 
@@ -649,7 +430,7 @@ class EmailController {
                     html: html_msg,
                 };
 
-                console.log(mailOptions);
+                
                 
 
                 try {
@@ -669,7 +450,7 @@ class EmailController {
                 this.logError(error, "N/A", client);
             }       
         }))
-        console.log("Finalizado");
+        
     }
 
     logError(error: any, email: string, cliente: any) {

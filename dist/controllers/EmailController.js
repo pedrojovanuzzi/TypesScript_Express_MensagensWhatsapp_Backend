@@ -15,61 +15,6 @@ const nodemailer_1 = __importDefault(require("nodemailer"));
 const ssh2_sftp_client_1 = __importDefault(require("ssh2-sftp-client"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-function getBase64File(filePath) {
-    const file = fs_1.default.readFileSync(filePath);
-    return file.toString('base64');
-}
-// async function getToken(): Promise<TokenResponse | undefined> {
-//     const tokenUrl = `https://login.microsoftonline.com/${process.env.tenantId}/oauth2/v2.0/token`;
-//     const data = qs.stringify({
-//         client_id: process.env.OUTLOOK_CLIENT,
-//         grant_type: 'refresh_token',
-//         refresh_token: process.env.code, // O refresh token que você já possui
-//         client_secret: process.env.OUTLOOK_SECRET, // O segredo do cliente
-//     });
-//     const config = {
-//         headers: {
-//             'Content-Type': 'application/x-www-form-urlencoded',
-//         },
-//     };
-//     try {
-//         const response = await axios.post(tokenUrl, data, config);
-//         return {
-//             accessToken: response.data.access_token,
-//             refreshToken: response.data.refresh_token
-//         };
-//     } catch (error: any) {
-//         console.error('Erro ao obter o token Refresh:', error.response ? error.response.data : error.message);
-//     }
-// }
-// async function sendEmail(mailOptions: MailOptions | MailOptionsWithFile): Promise<void> {
-//     const tokenResponse = await getToken();
-//     if (!tokenResponse) {
-//         console.log("Erro ao obter token de acesso.");
-//         return;
-//     }
-//     const { accessToken, refreshToken } = tokenResponse;
-//     console.log("AUTH CODE " + accessToken);
-//     console.log("refreshToken " + refreshToken);
-//     const url = `https://graph.microsoft.com/v1.0/users/${process.env.MAILGUNNER_USER}/sendMail`;
-//     try {
-//         await axios.post(
-//             url,
-//             {
-//                 message: mailOptions.message              
-//             },
-//             {
-//                 headers: {
-//                     Authorization: `Bearer ${accessToken}`,
-//                     'Content-Type': 'application/json'
-//                 }
-//             }
-//         );
-//         console.log("E-mail enviado com sucesso!");
-//     } catch (error: any) {
-//         console.error('Erro ao enviar e-mail:', error.response ? error.response.data : error.message);
-//     }
-// }
 const transporter = nodemailer_1.default.createTransport({
     host: 'smtp.mailgun.org',
     port: 587, // Porta SMTP para envio de e-mails
@@ -94,19 +39,6 @@ node_cron_1.default.schedule('0 4 * * *', () => {
     console.log('RUNNING CRONTAB THE DAY');
     emailController.DiasDoVencimento();
 });
-// cron.schedule('0 8 * * *', async () => {
-//     console.log('RUNNING JOB CLEAR');
-//     try {
-//         // Verifica o estado dos jobs
-//         const jobs = await emailQueue.getJobs(['waiting','active']);
-//         console.log('Jobs na fila:', jobs.length);
-//         // Aguarda até que a fila esteja vazia
-//         await waitUntilQueueEmpty(emailQueue);
-//         console.log('Queue processada com sucesso!');
-//     } catch (error) {
-//         console.error('Erro ao processar a fila:', error);
-//     }
-// });
 // cron.schedule('*/1 * * * *', () => {
 //     console.log('RUNNING CRONTAB TEST');
 //     emailController.TesteEmail();
@@ -168,8 +100,6 @@ class EmailController {
         const MesDeHoje = date.getMonth() + 1; // getMonth retorna de 0 a 11, então adicionamos 1
         const diaHoje = date.getDate(); // getDate retorna o dia do mês
         const diaVencimento = diaHoje;
-        console.log(MesDeHoje);
-        console.log(diaHoje);
         const resultados = ds_1.AppDataSource.getRepository(Record_1.Record);
         const clientes = await resultados.find({
             where: {
@@ -197,7 +127,6 @@ class EmailController {
                 const ftpUser = String(process.env.USERNAME_FTP); // ajuste com suas credenciais
                 const ftpPassword = String(process.env.PASSWORD_FTP); // ajuste com suas credenciais
                 const remotePdfPath = `${pdfPath}${idBoleto}.pdf`; // ajustado para o ID do cliente
-                console.log("RemotePDF: " + remotePdfPath);
                 const localPdfPath = path_1.default.join(__dirname, "..", "..", 'temp', `${idBoleto}.pdf`); // Caminho local temporário para salvar o PDF
                 // Baixar o PDF do servidor FTP antes de enviar o e-mail
                 const pdfDownload = await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
@@ -214,7 +143,6 @@ class EmailController {
                             }
                         ]
                     };
-                    console.log(mailOptions);
                     try {
                         await transporter.sendMail(mailOptions);
                     }
@@ -230,7 +158,6 @@ class EmailController {
                         subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
                         html: html_msg,
                     };
-                    console.log(mailOptions);
                     try {
                         await transporter.sendMail(mailOptions);
                     }
@@ -251,7 +178,6 @@ class EmailController {
                 this.logError(error, "N/A", client);
             }
         }));
-        console.log("Finalizado");
     }
     async DiasAntes5() {
         const date = new Date();
@@ -259,8 +185,6 @@ class EmailController {
         const MesDeHoje = date.getMonth() + 1; // getMonth retorna de 0 a 11, então adicionamos 1
         const diaHoje = date.getDate(); // getDate retorna o dia do mês
         const diaVencimento = diaHoje + 5;
-        console.log(MesDeHoje);
-        console.log(diaHoje);
         const resultados = ds_1.AppDataSource.getRepository(Record_1.Record);
         const clientes = await resultados.find({
             //Alias representa o resultado da data da coluna
@@ -270,7 +194,7 @@ class EmailController {
                 status: (0, typeorm_1.Raw)(alias => `${alias} != 'pago'`)
             }
         });
-        // console.log(clientes);
+        console.log("Quantidade de Clientes: " + clientes.length);
         await Promise.all(clientes.map(async (client) => {
             try {
                 let msg = "";
@@ -288,7 +212,6 @@ class EmailController {
                 const ftpUser = String(process.env.USERNAME_FTP); // ajuste com suas credenciais
                 const ftpPassword = String(process.env.PASSWORD_FTP); // ajuste com suas credenciais
                 const remotePdfPath = `${pdfPath}${idBoleto}.pdf`; // ajustado para o ID do cliente
-                console.log("RemotePDF: " + remotePdfPath);
                 const localPdfPath = path_1.default.join(__dirname, "..", "..", 'temp', `${idBoleto}.pdf`); // Caminho local temporário para salvar o PDF
                 // Baixar o PDF do servidor FTP antes de enviar o e-mail
                 const pdfDownload = await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
@@ -305,8 +228,6 @@ class EmailController {
                             }
                         ]
                     };
-                    // console.log(msg);
-                    console.log(mailOptions);
                     try {
                         transporter.sendMail(mailOptions);
                     }
@@ -322,7 +243,6 @@ class EmailController {
                         subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
                         html: html_msg,
                     };
-                    console.log(mailOptions);
                     try {
                         transporter.sendMail(mailOptions);
                         this.logSend(email.email, client);
@@ -342,7 +262,6 @@ class EmailController {
                 this.logError(error, "N/A", client);
             }
         }));
-        console.log("Finalizado");
     }
     async DiasDoVencimento() {
         const date = new Date();
@@ -350,8 +269,6 @@ class EmailController {
         const MesDeHoje = date.getMonth() + 1; // getMonth retorna de 0 a 11, então adicionamos 1
         const diaHoje = date.getDate(); // getDate retorna o dia do mês
         const diaVencimento = diaHoje;
-        console.log(MesDeHoje);
-        console.log(diaHoje);
         const resultados = ds_1.AppDataSource.getRepository(Record_1.Record);
         const clientes = await resultados.find({
             //Alias representa o resultado da data da coluna
@@ -361,7 +278,7 @@ class EmailController {
                 status: (0, typeorm_1.Raw)(alias => `${alias} != 'pago'`)
             }
         });
-        // console.log(clientes);
+        console.log("Quantidade de Clientes: " + clientes.length);
         await Promise.all(clientes.map(async (client) => {
             try {
                 let msg = "";
@@ -379,7 +296,6 @@ class EmailController {
                 const ftpUser = String(process.env.USERNAME_FTP); // ajuste com suas credenciais
                 const ftpPassword = String(process.env.PASSWORD_FTP); // ajuste com suas credenciais
                 const remotePdfPath = `${pdfPath}${idBoleto}.pdf`; // ajustado para o ID do cliente
-                console.log("RemotePDF: " + remotePdfPath);
                 const localPdfPath = path_1.default.join(__dirname, "..", "..", 'temp', `${idBoleto}.pdf`); // Caminho local temporário para salvar o PDF
                 // Baixar o PDF do servidor FTP antes de enviar o e-mail
                 const pdfDownload = await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
@@ -396,8 +312,6 @@ class EmailController {
                             }
                         ]
                     };
-                    // console.log(msg);
-                    console.log(mailOptions);
                     try {
                         transporter.sendMail(mailOptions);
                     }
@@ -413,7 +327,6 @@ class EmailController {
                         subject: `Sua Fatura Vence Hoje ${pppoe.toUpperCase()}`,
                         html: html_msg,
                     };
-                    console.log(mailOptions);
                     try {
                         transporter.sendMail(mailOptions);
                         this.logSend(email.email, client);
@@ -433,7 +346,6 @@ class EmailController {
                 this.logError(error, "N/A", client);
             }
         }));
-        console.log("Finalizado");
     }
     logError(error, email, cliente) {
         const logFilePath = path_1.default.join(__dirname, '../../logs/EmailLogs.json');
