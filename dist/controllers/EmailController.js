@@ -31,11 +31,11 @@ const transporter = nodemailer_1.default.createTransport({
         ciphers: 'SSLv3'
     }
 });
-node_cron_1.default.schedule('0 0 * * *', () => {
+node_cron_1.default.schedule('0 6 * * *', () => {
     console.log('RUNNING CRONTAB BEFORE 5 DAYS');
     emailController.DiasAntes5();
 });
-node_cron_1.default.schedule('0 4 * * *', () => {
+node_cron_1.default.schedule('0 0 * * *', () => {
     console.log('RUNNING CRONTAB THE DAY');
     emailController.DiasDoVencimento();
 });
