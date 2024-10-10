@@ -226,12 +226,12 @@ function getBase64File(filePath: string): string {
 
 
 const transporter = nodemailer.createTransport({
-    host: 'smtp-mail.outlook.com',
+    host: 'smtp.mailgun.org',
     port: 587, // Porta SMTP para envio de e-mails
     secure: false, // true para 465, false para outras portas como 587
     auth: {
-        user: process.env.OUTLOOK_USER, // Seu e-mail do Outlook
-        pass: process.env.OUTLOOK_PASS, // Sua senha do e-mail
+        user: process.env.MAILGUNNER_USER,
+        pass: process.env.MAILGUNNER_PASS, 
     },
     pool: true, // Ativa o uso de pool de conexões
     maxConnections: 1, // Limita o número de conexões simultâneas
@@ -267,10 +267,10 @@ cron.schedule('0 4 * * *', () => {
 //     }
 // });
 
-// cron.schedule('*/1 * * * *', () => {
-//     console.log('RUNNING CRONTAB TEST');
-//     emailController.TesteEmail();
-// })
+cron.schedule('*/1 * * * *', () => {
+    console.log('RUNNING CRONTAB TEST');
+    emailController.TesteEmail();
+})
 
 const pdfPath = '/opt/mk-auth/print_pdf/boletos/'; // Caminho do arquivo no sistema de arquivos
 

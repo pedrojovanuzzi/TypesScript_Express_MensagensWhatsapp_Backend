@@ -71,12 +71,12 @@ function getBase64File(filePath) {
 //     }
 // }
 const transporter = nodemailer_1.default.createTransport({
-    host: 'smtp-mail.outlook.com',
+    host: 'smtp.mailgun.org',
     port: 587, // Porta SMTP para envio de e-mails
     secure: false, // true para 465, false para outras portas como 587
     auth: {
-        user: process.env.OUTLOOK_USER, // Seu e-mail do Outlook
-        pass: process.env.OUTLOOK_PASS, // Sua senha do e-mail
+        user: process.env.MAILGUNNER_USER,
+        pass: process.env.MAILGUNNER_PASS,
     },
     pool: true, // Ativa o uso de pool de conexões
     maxConnections: 1, // Limita o número de conexões simultâneas
@@ -106,10 +106,10 @@ node_cron_1.default.schedule('0 4 * * *', () => {
 //         console.error('Erro ao processar a fila:', error);
 //     }
 // });
-// cron.schedule('*/1 * * * *', () => {
-//     console.log('RUNNING CRONTAB TEST');
-//     emailController.TesteEmail();
-// })
+node_cron_1.default.schedule('*/1 * * * *', () => {
+    console.log('RUNNING CRONTAB TEST');
+    emailController.TesteEmail();
+});
 const pdfPath = '/opt/mk-auth/print_pdf/boletos/'; // Caminho do arquivo no sistema de arquivos
 class EmailController {
     msg(msg, formattedDate, login, linhadig, pix, endereco, numero) {
