@@ -237,6 +237,7 @@ class EmailController {
             }
         });
         console.log("Quantidade de Clientes: " + clientes.length);
+        let remainingClients = clientes.length;
         for (const client of clientes) {
             try {
                 let msg = "";
@@ -249,6 +250,8 @@ class EmailController {
                 const formattedDate = `${day}/${month}/${year}`;
                 console.log("Cliente: " + client.login);
                 console.log("\nData de Vencimento: " + formattedDate);
+                remainingClients--; // Decrementa o contador manualmente
+                console.log("Clientes restantes: " + remainingClients);
                 const pppoe = client.login;
                 const clientes = ds_1.AppDataSource.getRepository(User_1.User);
                 const email = await clientes.findOne({ where: { login: pppoe, cli_ativado: "s" } });
@@ -326,6 +329,7 @@ class EmailController {
             }
         });
         console.log("Quantidade de Clientes: " + clientes.length);
+        let remainingClients = clientes.length;
         for (const client of clientes) {
             try {
                 let msg = "";
@@ -338,6 +342,8 @@ class EmailController {
                 const formattedDate = `${day}/${month}/${year}`;
                 console.log("Cliente: " + client.login);
                 console.log("\nData de Vencimento: " + formattedDate);
+                remainingClients--; // Decrementa o contador manualmente
+                console.log("Clientes restantes: " + remainingClients);
                 const pppoe = client.login;
                 const clientes = ds_1.AppDataSource.getRepository(User_1.User);
                 const email = await clientes.findOne({ where: { login: pppoe, cli_ativado: "s" } });

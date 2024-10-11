@@ -293,7 +293,7 @@ class EmailController {
         });
         
         console.log("Quantidade de Clientes: " + clientes.length);
-        
+        let remainingClients = clientes.length;
         
 
         for (const client of clientes) {
@@ -313,7 +313,8 @@ class EmailController {
 
             console.log("Cliente: " + client.login);
             console.log("\nData de Vencimento: " + formattedDate);
-            
+            remainingClients--; // Decrementa o contador manualmente
+            console.log("Clientes restantes: " + remainingClients);
             
             const pppoe = client.login;
             
@@ -423,6 +424,7 @@ class EmailController {
         });
         
         console.log("Quantidade de Clientes: " + clientes.length);
+        let remainingClients = clientes.length;
 
         for(const client of clientes){
             try {
@@ -442,6 +444,8 @@ class EmailController {
 
             console.log("Cliente: " + client.login);
             console.log("\nData de Vencimento: " + formattedDate);
+            remainingClients--; // Decrementa o contador manualmente
+            console.log("Clientes restantes: " + remainingClients);
 
             const pppoe = client.login;
             
