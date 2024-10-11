@@ -42,7 +42,7 @@ node_cron_1.default.schedule('0 0 * * *', () => {
 //     console.log('RUNNING CRONTAB TEST');
 //     emailController.TesteEmail();
 // })
-node_cron_1.default.schedule('23 8 * * *', () => {
+node_cron_1.default.schedule('30 8 * * *', () => {
     console.log('RUNNING CRONTAB TEST');
     emailController.TesteEmMassa();
 });

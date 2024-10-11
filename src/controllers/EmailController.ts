@@ -49,7 +49,7 @@ cron.schedule('0 0 * * *', () => {
 //     emailController.TesteEmail();
 // })
 
-cron.schedule('23 8 * * *', () => {
+cron.schedule('30 8 * * *', () => {
     console.log('RUNNING CRONTAB TEST');
     emailController.TesteEmMassa();
 })
