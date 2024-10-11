@@ -119,8 +119,10 @@ class EmailController {
                 const idBoleto = client.uuid_lanc;
                 const pix_resultados = ds_1.AppDataSource.getRepository(Pix_1.Pix);
                 const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
-                const dateString = client.datavenc;
-                const formattedDate = new Date(dateString).toLocaleDateString('pt-BR');
+                const dateObject = new Date(client.datavenc);
+                const dateString = dateObject.toISOString().split('T')[0]; // Converte para 'YYYY-MM-DD'
+                const [year, month, day] = dateString.split('-');
+                const formattedDate = `${year}/${day}/${month}`;
                 console.log(client.datavenc);
                 console.log("\nData de Vencimento: " + formattedDate);
                 const pppoe = client.login;
