@@ -145,9 +145,9 @@ class EmailController {
                 const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
                 
                 const dateObject = new Date(client.datavenc);
-                const dateString = dateObject.toISOString().split('T')[0]; // Converte para 'YYYY-MM-DD'
+                const dateString = dateObject.toISOString().split('T')[0]; // Saída: '11/10/2024'
                 const [year, month, day] = dateString.split('-');
-                const formattedDate = `${year}/${day}/${month}`;    
+                const formattedDate = `${day}/${month}/${year}`; 
     
                 console.log(client.datavenc);
                 console.log("\nData de Vencimento: " + formattedDate);
