@@ -146,7 +146,8 @@ class EmailController {
     
                 const formattedDate = client.datavenc.toISOString().split('T')[0].split('-').reverse().join('/');
     
-                console.log("Data de Vencimento: " + formattedDate);
+                console.log(client.datavenc);
+                console.log("\nData de Vencimento: " + formattedDate);
 
                 const pppoe = client.login;
     

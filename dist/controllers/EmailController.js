@@ -120,7 +120,8 @@ class EmailController {
                 const pix_resultados = ds_1.AppDataSource.getRepository(Pix_1.Pix);
                 const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
                 const formattedDate = client.datavenc.toISOString().split('T')[0].split('-').reverse().join('/');
-                console.log("Data de Vencimento: " + formattedDate);
+                console.log(client.datavenc);
+                console.log("\nData de Vencimento: " + formattedDate);
                 const pppoe = client.login;
                 const clientesRepo = ds_1.AppDataSource.getRepository(User_1.User);
                 const email = await clientesRepo.findOne({ where: { login: pppoe, cli_ativado: "s" } });
