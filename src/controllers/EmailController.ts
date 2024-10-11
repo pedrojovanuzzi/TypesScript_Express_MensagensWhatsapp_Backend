@@ -359,6 +359,7 @@ class EmailController {
 
                 try {
                     transporter.sendMail(mailOptions);
+                    this.logSend(email.email, client);
                 } catch (error) {
                     console.log(error);
                     this.logError(error, email.email, client);
@@ -487,6 +488,7 @@ class EmailController {
 
                 try {
                     transporter.sendMail(mailOptions); 
+                    this.logSend(email.email, client);
                 } catch (error) {
                     console.log(error);
                     this.logError(error, email.email, client);
