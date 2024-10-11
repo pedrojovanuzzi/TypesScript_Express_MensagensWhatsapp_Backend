@@ -143,8 +143,9 @@ class EmailController {
     
                 const pix_resultados = AppDataSource.getRepository(Pix);
                 const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
-    
-                const formattedDate = client.datavenc.toISOString().split('T')[0].split('-').reverse().join('/');
+                
+                const dateString = client.datavenc;
+                const formattedDate = new Date(dateString).toLocaleDateString('pt-BR');
     
                 console.log(client.datavenc);
                 console.log("\nData de Vencimento: " + formattedDate);
