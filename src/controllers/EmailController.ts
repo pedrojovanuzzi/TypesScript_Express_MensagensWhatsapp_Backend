@@ -245,23 +245,23 @@ class EmailController {
         });
 
 
-        emailArray.map(async (client) => {
+        for (const client of emailArray) {
             const mailOptions = {
                 from: process.env.MAILGUNNER_USER,
                 to: String(client.email),
                 subject: `Test Email`,
                 msg: "Testando Envio"
             };
-
+    
             try {
-                transporter.sendMail(mailOptions);
+                await transporter.sendMail(mailOptions);
+                console.log("Teste Email Enviado: " + client.email);
             } catch (error) {
                 console.log(error);
             }
-            console.log("Teste Email Enviado: " + client.email);
-            await sleep(36000);
-
-        })
+    
+            await sleep(36000); // Pausa de 36 segundos
+        }
 
         
 

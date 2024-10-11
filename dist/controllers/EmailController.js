@@ -199,7 +199,7 @@ class EmailController {
         const emailArray = Array.from(fakeEmailsMap).map(([key, email]) => {
             return { key, email }; // Pode personalizar o retorno aqui
         });
-        emailArray.map(async (client) => {
+        for (const client of emailArray) {
             const mailOptions = {
                 from: process.env.MAILGUNNER_USER,
                 to: String(client.email),
@@ -207,14 +207,14 @@ class EmailController {
                 msg: "Testando Envio"
             };
             try {
-                transporter.sendMail(mailOptions);
+                await transporter.sendMail(mailOptions);
+                console.log("Teste Email Enviado: " + client.email);
             }
             catch (error) {
                 console.log(error);
             }
-            console.log("Teste Email Enviado: " + client.email);
-            await sleep(36000);
-        });
+            await sleep(36000); // Pausa de 36 segundos
+        }
     }
     async DiasAntes5() {
         const date = new Date();
