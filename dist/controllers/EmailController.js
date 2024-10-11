@@ -123,6 +123,7 @@ class EmailController {
                 const dateString = dateObject.toISOString().split('T')[0]; // Saída: '11/10/2024'
                 const [year, month, day] = dateString.split('-');
                 const formattedDate = `${day}/${month}/${year}`;
+                console.log("Cliente: " + client.login);
                 console.log("\nData de Vencimento: " + formattedDate);
                 const pppoe = client.login;
                 const clientesRepo = ds_1.AppDataSource.getRepository(User_1.User);
@@ -246,6 +247,7 @@ class EmailController {
                 const dateString = dateObject.toISOString().split('T')[0]; // Saída: '11/10/2024'
                 const [year, month, day] = dateString.split('-');
                 const formattedDate = `${day}/${month}/${year}`;
+                console.log("Cliente: " + client.login);
                 console.log("\nData de Vencimento: " + formattedDate);
                 const pppoe = client.login;
                 const clientes = ds_1.AppDataSource.getRepository(User_1.User);
@@ -334,6 +336,7 @@ class EmailController {
                 const dateString = dateObject.toISOString().split('T')[0]; // Saída: '11/10/2024'
                 const [year, month, day] = dateString.split('-');
                 const formattedDate = `${day}/${month}/${year}`;
+                console.log("Cliente: " + client.login);
                 console.log("\nData de Vencimento: " + formattedDate);
                 const pppoe = client.login;
                 const clientes = ds_1.AppDataSource.getRepository(User_1.User);

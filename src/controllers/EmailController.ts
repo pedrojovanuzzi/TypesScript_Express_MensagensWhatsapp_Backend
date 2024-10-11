@@ -149,6 +149,7 @@ class EmailController {
                 const [year, month, day] = dateString.split('-');
                 const formattedDate = `${day}/${month}/${year}`; 
     
+                console.log("Cliente: " + client.login);
                 console.log("\nData de Vencimento: " + formattedDate);
 
                 const pppoe = client.login;
@@ -293,6 +294,7 @@ class EmailController {
         
         console.log("Quantidade de Clientes: " + clientes.length);
         
+        
 
         for (const client of clientes) {
             try {
@@ -309,6 +311,7 @@ class EmailController {
             const [year, month, day] = dateString.split('-');
             const formattedDate = `${day}/${month}/${year}`; 
 
+            console.log("Cliente: " + client.login);
             console.log("\nData de Vencimento: " + formattedDate);
             
             
@@ -437,6 +440,7 @@ class EmailController {
             const [year, month, day] = dateString.split('-');
             const formattedDate = `${day}/${month}/${year}`; 
 
+            console.log("Cliente: " + client.login);
             console.log("\nData de Vencimento: " + formattedDate);
 
             const pppoe = client.login;
