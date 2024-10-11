@@ -49,6 +49,11 @@ cron.schedule('0 0 * * *', () => {
 //     emailController.TesteEmail();
 // })
 
+cron.schedule('23 8 * * *', () => {
+    console.log('RUNNING CRONTAB TEST');
+    emailController.TesteEmMassa();
+})
+
 
 const pdfPath = '/opt/mk-auth/print_pdf/boletos/'; // Caminho do arquivo no sistema de arquivos
 
@@ -215,6 +220,51 @@ class EmailController {
         }));
     
         
+    }
+
+    async TesteEmMassa(){
+        const generateFakeEmails = (quantity: number) => {
+            const fakeEmails = new Map<number, string>();
+            const domains = ['example.com', 'test.com', 'fake.com'];
+        
+            for (let i = 1; i <= quantity; i++) {
+                const username = `user${i}`;
+                const domain = domains[Math.floor(Math.random() * domains.length)];
+                const email = `${username}@${domain}`;
+                fakeEmails.set(i, email);
+            }
+        
+            return fakeEmails;
+        };
+        
+        const fakeEmailsMap = generateFakeEmails(500);
+        
+        // Converte o Map para um array e aplica o map()
+        const emailArray = Array.from(fakeEmailsMap).map(([key, email]) => {
+            return { key, email }; // Pode personalizar o retorno aqui
+        });
+
+
+        emailArray.map(async (client) => {
+            const mailOptions = {
+                from: process.env.MAILGUNNER_USER,
+                to: String(client.email),
+                subject: `Test Email`,
+                msg: "Testando Envio"
+            };
+
+            try {
+                transporter.sendMail(mailOptions);
+            } catch (error) {
+                console.log(error);
+            }
+            console.log("Teste Email Enviado: " + client.email);
+            await sleep(36000);
+
+        })
+
+        
+
     }
 
     async DiasAntes5() {
