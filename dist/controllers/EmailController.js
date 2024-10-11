@@ -38,10 +38,10 @@ node_cron_1.default.schedule('0 0 * * *', () => {
     console.log('RUNNING CRONTAB THE DAY');
     emailController.DiasDoVencimento();
 });
-node_cron_1.default.schedule('*/1 * * * *', () => {
-    console.log('RUNNING CRONTAB TEST');
-    emailController.TesteEmail();
-});
+// cron.schedule('*/1 * * * *', () => {
+//     console.log('RUNNING CRONTAB TEST');
+//     emailController.TesteEmail();
+// })
 // cron.schedule('30 8 * * *', () => {
 //     console.log('RUNNING CRONTAB TEST');
 //     emailController.TesteEmMassa();
@@ -123,7 +123,6 @@ class EmailController {
                 const dateString = dateObject.toISOString().split('T')[0]; // Saída: '11/10/2024'
                 const [year, month, day] = dateString.split('-');
                 const formattedDate = `${day}/${month}/${year}`;
-                console.log(client.datavenc);
                 console.log("\nData de Vencimento: " + formattedDate);
                 const pppoe = client.login;
                 const clientesRepo = ds_1.AppDataSource.getRepository(User_1.User);
@@ -243,7 +242,11 @@ class EmailController {
                 const idBoleto = client.uuid_lanc;
                 const pix_resultados = ds_1.AppDataSource.getRepository(Pix_1.Pix);
                 const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
-                const formattedDate = client.datavenc.toISOString().split('T')[0].split('-').reverse().join('/');
+                const dateObject = new Date(client.datavenc);
+                const dateString = dateObject.toISOString().split('T')[0]; // Saída: '11/10/2024'
+                const [year, month, day] = dateString.split('-');
+                const formattedDate = `${day}/${month}/${year}`;
+                console.log("\nData de Vencimento: " + formattedDate);
                 const pppoe = client.login;
                 const clientes = ds_1.AppDataSource.getRepository(User_1.User);
                 const email = await clientes.findOne({ where: { login: pppoe, cli_ativado: "s" } });
@@ -327,7 +330,11 @@ class EmailController {
                 const idBoleto = client.uuid_lanc;
                 const pix_resultados = ds_1.AppDataSource.getRepository(Pix_1.Pix);
                 const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
-                const formattedDate = client.datavenc.toISOString().split('T')[0].split('-').reverse().join('/');
+                const dateObject = new Date(client.datavenc);
+                const dateString = dateObject.toISOString().split('T')[0]; // Saída: '11/10/2024'
+                const [year, month, day] = dateString.split('-');
+                const formattedDate = `${day}/${month}/${year}`;
+                console.log("\nData de Vencimento: " + formattedDate);
                 const pppoe = client.login;
                 const clientes = ds_1.AppDataSource.getRepository(User_1.User);
                 const email = await clientes.findOne({ where: { login: pppoe, cli_ativado: "s" } });

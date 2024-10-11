@@ -44,10 +44,10 @@ cron.schedule('0 0 * * *', () => {
     emailController.DiasDoVencimento();
 });
 
-cron.schedule('*/1 * * * *', () => {
-    console.log('RUNNING CRONTAB TEST');
-    emailController.TesteEmail();
-})
+// cron.schedule('*/1 * * * *', () => {
+//     console.log('RUNNING CRONTAB TEST');
+//     emailController.TesteEmail();
+// })
 
 // cron.schedule('30 8 * * *', () => {
 //     console.log('RUNNING CRONTAB TEST');
@@ -149,7 +149,6 @@ class EmailController {
                 const [year, month, day] = dateString.split('-');
                 const formattedDate = `${day}/${month}/${year}`; 
     
-                console.log(client.datavenc);
                 console.log("\nData de Vencimento: " + formattedDate);
 
                 const pppoe = client.login;
@@ -305,7 +304,12 @@ class EmailController {
             const pix = await pix_resultados.findOne({where: {titulo: idBoleto}});
             
 
-            const formattedDate = client.datavenc.toISOString().split('T')[0].split('-').reverse().join('/');
+            const dateObject = new Date(client.datavenc);
+            const dateString = dateObject.toISOString().split('T')[0]; // Saída: '11/10/2024'
+            const [year, month, day] = dateString.split('-');
+            const formattedDate = `${day}/${month}/${year}`; 
+
+            console.log("\nData de Vencimento: " + formattedDate);
             
             
             const pppoe = client.login;
@@ -428,7 +432,12 @@ class EmailController {
             const pix = await pix_resultados.findOne({where: {titulo: idBoleto}});
             
 
-            const formattedDate = client.datavenc.toISOString().split('T')[0].split('-').reverse().join('/');
+            const dateObject = new Date(client.datavenc);
+            const dateString = dateObject.toISOString().split('T')[0]; // Saída: '11/10/2024'
+            const [year, month, day] = dateString.split('-');
+            const formattedDate = `${day}/${month}/${year}`; 
+
+            console.log("\nData de Vencimento: " + formattedDate);
 
             const pppoe = client.login;
             
