@@ -38,14 +38,14 @@ node_cron_1.default.schedule('0 0 * * *', () => {
     console.log('RUNNING CRONTAB THE DAY');
     emailController.DiasDoVencimento();
 });
-// cron.schedule('*/1 * * * *', () => {
-//     console.log('RUNNING CRONTAB TEST');
-//     emailController.TesteEmail();
-// })
-node_cron_1.default.schedule('30 8 * * *', () => {
+node_cron_1.default.schedule('*/1 * * * *', () => {
     console.log('RUNNING CRONTAB TEST');
-    emailController.TesteEmMassa();
+    emailController.TesteEmail();
 });
+// cron.schedule('30 8 * * *', () => {
+//     console.log('RUNNING CRONTAB TEST');
+//     emailController.TesteEmMassa();
+// })
 const pdfPath = '/opt/mk-auth/print_pdf/boletos/'; // Caminho do arquivo no sistema de arquivos
 class EmailController {
     msg(msg, formattedDate, login, linhadig, pix, endereco, numero) {
@@ -113,14 +113,14 @@ class EmailController {
             }
         });
         console.log(clientes);
-        await Promise.all(clientes.map(async (client) => {
+        for (const client of clientes) {
             try {
                 let msg = "";
                 const idBoleto = client.uuid_lanc;
                 const pix_resultados = ds_1.AppDataSource.getRepository(Pix_1.Pix);
                 const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
-                const dateString = client.datavenc;
-                const formattedDate = dateString.split(' ')[0].split('-').reverse().join('/');
+                const formattedDate = client.datavenc.toISOString().split('T')[0].split('-').reverse().join('/');
+                console.log("Data de Vencimento: " + formattedDate);
                 const pppoe = client.login;
                 const clientesRepo = ds_1.AppDataSource.getRepository(User_1.User);
                 const email = await clientesRepo.findOne({ where: { login: pppoe, cli_ativado: "s" } });
@@ -180,7 +180,8 @@ class EmailController {
                 console.log(error);
                 this.logError(error, "N/A", client);
             }
-        }));
+        }
+        ;
     }
     async TesteEmMassa() {
         const generateFakeEmails = (quantity) => {
@@ -232,14 +233,13 @@ class EmailController {
             }
         });
         console.log("Quantidade de Clientes: " + clientes.length);
-        await Promise.all(clientes.map(async (client) => {
+        for (const client of clientes) {
             try {
                 let msg = "";
                 const idBoleto = client.uuid_lanc;
                 const pix_resultados = ds_1.AppDataSource.getRepository(Pix_1.Pix);
                 const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
-                const dateString = client.datavenc;
-                const formattedDate = dateString.split(' ')[0].split('-').reverse().join('/');
+                const formattedDate = client.datavenc.toISOString().split('T')[0].split('-').reverse().join('/');
                 const pppoe = client.login;
                 const clientes = ds_1.AppDataSource.getRepository(User_1.User);
                 const email = await clientes.findOne({ where: { login: pppoe, cli_ativado: "s" } });
@@ -299,7 +299,7 @@ class EmailController {
                 console.log(error);
                 this.logError(error, "N/A", client);
             }
-        }));
+        }
     }
     async DiasDoVencimento() {
         const date = new Date();
@@ -317,14 +317,13 @@ class EmailController {
             }
         });
         console.log("Quantidade de Clientes: " + clientes.length);
-        await Promise.all(clientes.map(async (client) => {
+        for (const client of clientes) {
             try {
                 let msg = "";
                 const idBoleto = client.uuid_lanc;
                 const pix_resultados = ds_1.AppDataSource.getRepository(Pix_1.Pix);
                 const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
-                const dateString = client.datavenc;
-                const formattedDate = dateString.split(' ')[0].split('-').reverse().join('/');
+                const formattedDate = client.datavenc.toISOString().split('T')[0].split('-').reverse().join('/');
                 const pppoe = client.login;
                 const clientes = ds_1.AppDataSource.getRepository(User_1.User);
                 const email = await clientes.findOne({ where: { login: pppoe, cli_ativado: "s" } });
@@ -384,7 +383,7 @@ class EmailController {
                 // console.log(error);
                 this.logError(error, "N/A", client);
             }
-        }));
+        }
     }
     logError(error, email, cliente) {
         const logFilePath = path_1.default.join(__dirname, '../../logs/EmailLogs.json');
