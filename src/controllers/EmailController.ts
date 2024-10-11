@@ -98,16 +98,16 @@ class EmailController {
           });
           const fileExists = await client.exists(remoteFilePath);
         if (fileExists) {
-            console.log(`Arquivo encontrado no servidor: ${remoteFilePath}`);
+            // console.log(`Arquivo encontrado no servidor: ${remoteFilePath}`);
             await client.fastGet(remoteFilePath, localFilePath);
-            console.log("PDF baixado com sucesso via SFTP");
+            // console.log("PDF baixado com sucesso via SFTP");
             return true;
         } else {
-            console.error(`Arquivo não encontrado no servidor: ${remoteFilePath}`);
+            // console.error(`Arquivo não encontrado no servidor: ${remoteFilePath}`);
             return false;
         }
         } catch (error) {
-            console.error("Erro ao baixar o PDF via SFTP: ", error);
+            // console.error("Erro ao baixar o PDF via SFTP: ", error);
             return false;
         } finally {
             client.end();
@@ -399,6 +399,9 @@ class EmailController {
             
             
         }
+
+        console.log("Finalizado Crontab 5 Dias Antes");
+        
         
     }
 
@@ -526,6 +529,8 @@ class EmailController {
                 this.logError(error, "N/A", client);
             }       
         }
+
+        console.log("Finalizado Crontab do Dia");
         
     }
 
