@@ -39,7 +39,7 @@ cron.schedule('0 8 * * *', () => {
     console.log('RUNNING CRONTAB BEFORE 5 DAYS');
     emailController.DiasAntes5();
 });
-cron.schedule('0 0 * * *', () => {
+cron.schedule('16 9 * * *', () => {
     console.log('RUNNING CRONTAB THE DAY');
     emailController.DiasDoVencimento();
 });
