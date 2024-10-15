@@ -30,7 +30,7 @@ const transporter = nodemailer_1.default.createTransport({
         ciphers: 'SSLv3'
     }
 });
-node_cron_1.default.schedule('0 8 * * *', () => {
+node_cron_1.default.schedule('0 10 * * *', () => {
     console.log('RUNNING CRONTAB BEFORE 5 DAYS');
     emailController.DiasAntes5();
 });
@@ -218,7 +218,7 @@ class EmailController {
             catch (error) {
                 console.log(error);
             }
-            await sleep(36000); // Pausa de 36 segundos
+            await sleep(50000); // Pausa de 36 segundos
         }
     }
     async DiasAntes5() {
@@ -306,7 +306,7 @@ class EmailController {
                     console.log("Sem Email Cadastrado");
                     this.logError("Sem Email Cadastrado", "Email", client);
                 }
-                await sleep(36000);
+                await sleep(50000);
             }
             catch (error) {
                 console.log(error);
@@ -400,7 +400,7 @@ class EmailController {
                     console.log("Sem Email Cadastrado");
                     this.logError("Sem Email Cadastrado", "Email", client);
                 }
-                await sleep(36000);
+                await sleep(50000);
             }
             catch (error) {
                 // console.log(error);
