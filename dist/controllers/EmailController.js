@@ -31,19 +31,19 @@ const transporter = nodemailer_1.default.createTransport({
         ciphers: 'SSLv3'
     }
 });
-node_cron_1.default.schedule('0 10 * * *', () => {
+node_cron_1.default.schedule('0 9 * * *', () => {
     console.log('RUNNING CRONTAB BEFORE 5 DAYS');
     emailController.DiasAntes5();
 });
-node_cron_1.default.schedule('0 0 * * *', () => {
-    console.log('RUNNING CRONTAB THE DAY');
-    emailController.DiasDoVencimento();
-});
-node_cron_1.default.schedule('*/1 * * * *', () => {
-    console.log('RUNNING CRONTAB TEST');
-    emailController.TesteEmail();
-    emailController.TesteEmail5DiasAntes();
-});
+// cron.schedule('0 0 * * *', () => {
+//     console.log('RUNNING CRONTAB THE DAY');
+//     emailController.DiasDoVencimento();
+// });
+// cron.schedule('*/1 * * * *', () => {
+//     console.log('RUNNING CRONTAB TEST');
+//     emailController.TesteEmail();
+//     emailController.TesteEmail5DiasAntes();
+// })
 // cron.schedule('30 8 * * *', () => {
 //     console.log('RUNNING CRONTAB TEST');
 //     emailController.TesteEmMassa();
@@ -312,7 +312,7 @@ class EmailController {
     }
     async DiasAntes5() {
         const date = new Date();
-        const dataAlvo = (0, date_fns_1.subDays)(date, 5); // Subtrai 5 dias da data atual para buscar vencimentos futuros
+        const dataAlvo = (0, date_fns_1.addDays)(date, 3); // Calcula a data alvo, 5 dias após a data atual
         const anoAlvo = dataAlvo.getFullYear();
         const mesAlvo = dataAlvo.getMonth() + 1; // Meses em JavaScript vão de 0 a 11, então somamos 1
         const diaAlvo = dataAlvo.getDate();
@@ -332,7 +332,8 @@ class EmailController {
                 const idBoleto = client.uuid_lanc;
                 const pix_resultados = ds_1.AppDataSource.getRepository(Pix_1.Pix);
                 const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
-                const formattedDate = (0, date_fns_1.format)(new Date(client.datavenc), 'dd/MM/yyyy');
+                const parsedDate = (0, date_fns_1.parseISO)(String(client.datavenc)); // Se datavenc for string
+                const formattedDate = (0, date_fns_1.format)(parsedDate, 'dd/MM/yyyy'); // Formata a data
                 console.log("Cliente: " + client.login);
                 console.log("\nData de Vencimento: " + formattedDate);
                 remainingClients--;
@@ -419,7 +420,7 @@ class EmailController {
                 const idBoleto = client.uuid_lanc;
                 const pix_resultados = ds_1.AppDataSource.getRepository(Pix_1.Pix);
                 const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
-                const formattedDate = (0, date_fns_1.format)(new Date(client.datavenc), 'dd/MM/yyyy');
+                const formattedDate = (0, date_fns_1.format)((0, date_fns_1.parseISO)(String(client.datavenc)), 'dd/MM/yyyy');
                 console.log("Cliente: " + client.login);
                 console.log("\nData de Vencimento: " + formattedDate);
                 remainingClients--;
