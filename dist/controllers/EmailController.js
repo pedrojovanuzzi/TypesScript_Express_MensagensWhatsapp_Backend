@@ -31,14 +31,14 @@ const transporter = nodemailer_1.default.createTransport({
         ciphers: 'SSLv3'
     }
 });
-node_cron_1.default.schedule('0 9 * * *', () => {
+node_cron_1.default.schedule('0 10 * * *', () => {
     console.log('RUNNING CRONTAB BEFORE 5 DAYS');
     emailController.DiasAntes5();
 });
-// cron.schedule('0 0 * * *', () => {
-//     console.log('RUNNING CRONTAB THE DAY');
-//     emailController.DiasDoVencimento();
-// });
+node_cron_1.default.schedule('29 11 * * *', () => {
+    console.log('RUNNING CRONTAB THE DAY');
+    emailController.DiasDoVencimento();
+});
 // cron.schedule('*/1 * * * *', () => {
 //     console.log('RUNNING CRONTAB TEST');
 //     emailController.TesteEmail();
@@ -312,7 +312,7 @@ class EmailController {
     }
     async DiasAntes5() {
         const date = new Date();
-        const dataAlvo = (0, date_fns_1.addDays)(date, 3); // Calcula a data alvo, 5 dias após a data atual
+        const dataAlvo = (0, date_fns_1.addDays)(date, 5); // Calcula a data alvo, 5 dias após a data atual
         const anoAlvo = dataAlvo.getFullYear();
         const mesAlvo = dataAlvo.getMonth() + 1; // Meses em JavaScript vão de 0 a 11, então somamos 1
         const diaAlvo = dataAlvo.getDate();
