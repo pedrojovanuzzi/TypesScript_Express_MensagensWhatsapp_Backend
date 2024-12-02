@@ -4,7 +4,7 @@ import { Record } from "../entities/Record";
 import { Pix } from "../entities/Pix";
 import { User } from "../entities/User";
 import { AppDataSource } from "../database/ds";
-import { format, subDays, addDays, getDay, getMonth } from "date-fns";
+import { format, subDays, addDays, getDay, getMonth, parseISO } from "date-fns";
 import { Raw } from "typeorm";
 import path from 'path';
 import fs, { link } from "fs";
@@ -117,7 +117,7 @@ class EmailController {
         }
       }
       
-    async TesteEmail() {
+      async TesteEmail() {
         const date = new Date();
         const anoAtual = date.getFullYear();
         const MesDeHoje = date.getMonth() + 1;
@@ -144,11 +144,8 @@ class EmailController {
                 const pix_resultados = AppDataSource.getRepository(Pix);
                 const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
     
-                const formattedDate = new Date(client.datavenc).toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                });
+                // Converte a data de vencimento para o formato desejado
+                const formattedDate = format(parseISO(String(client.datavenc)), 'dd/MM/yyyy');
     
                 console.log("Cliente: " + client.login);
                 console.log("\nData de Vencimento: " + formattedDate);
@@ -222,7 +219,7 @@ class EmailController {
         const date = new Date();
         const dataAlvo = addDays(date, 5); // Calcula a data alvo, 5 dias após a data atual
         const anoAlvo = dataAlvo.getFullYear();
-        const mesAlvo = dataAlvo.getMonth() + 1; // Meses começam em 0 no JavaScript
+        const mesAlvo = dataAlvo.getMonth() + 1;
         const diaAlvo = dataAlvo.getDate();
     
         const resultados = AppDataSource.getRepository(Record);
@@ -247,11 +244,9 @@ class EmailController {
                 const pix_resultados = AppDataSource.getRepository(Pix);
                 const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
     
-                const formattedDate = new Date(client.datavenc).toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                });
+                // Ajuste para parsear a data corretamente
+                const parsedDate = parseISO(String(client.datavenc)); // Se datavenc for string
+                const formattedDate = format(parsedDate, 'dd/MM/yyyy'); // Formata a data
     
                 console.log("Cliente: " + client.login);
                 console.log("Data de Vencimento: " + formattedDate);
