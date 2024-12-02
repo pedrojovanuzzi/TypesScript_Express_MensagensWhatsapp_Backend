@@ -120,11 +120,8 @@ class EmailController {
                 const idBoleto = client.uuid_lanc;
                 const pix_resultados = ds_1.AppDataSource.getRepository(Pix_1.Pix);
                 const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
-                const formattedDate = new Date(client.datavenc).toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                });
+                // Converte a data de vencimento para o formato desejado
+                const formattedDate = (0, date_fns_1.format)((0, date_fns_1.parseISO)(String(client.datavenc)), 'dd/MM/yyyy');
                 console.log("Cliente: " + client.login);
                 console.log("\nData de Vencimento: " + formattedDate);
                 const pppoe = client.login;
@@ -192,7 +189,7 @@ class EmailController {
         const date = new Date();
         const dataAlvo = (0, date_fns_1.addDays)(date, 5); // Calcula a data alvo, 5 dias após a data atual
         const anoAlvo = dataAlvo.getFullYear();
-        const mesAlvo = dataAlvo.getMonth() + 1; // Meses começam em 0 no JavaScript
+        const mesAlvo = dataAlvo.getMonth() + 1;
         const diaAlvo = dataAlvo.getDate();
         const resultados = ds_1.AppDataSource.getRepository(Record_1.Record);
         const clientes = await resultados.find({
@@ -211,11 +208,9 @@ class EmailController {
                 const idBoleto = client.uuid_lanc;
                 const pix_resultados = ds_1.AppDataSource.getRepository(Pix_1.Pix);
                 const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
-                const formattedDate = new Date(client.datavenc).toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                });
+                // Ajuste para parsear a data corretamente
+                const parsedDate = (0, date_fns_1.parseISO)(String(client.datavenc)); // Se datavenc for string
+                const formattedDate = (0, date_fns_1.format)(parsedDate, 'dd/MM/yyyy'); // Formata a data
                 console.log("Cliente: " + client.login);
                 console.log("Data de Vencimento: " + formattedDate);
                 const pppoe = client.login;
