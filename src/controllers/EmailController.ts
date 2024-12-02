@@ -42,7 +42,7 @@ cron.schedule('0 10 * * *', () => {
     emailController.DiasAntes5();
 });
 
-cron.schedule('29 11 * * *', () => {
+cron.schedule('0 0 * * *', () => {
     console.log('RUNNING CRONTAB THE DAY');
     emailController.DiasDoVencimento();
 });
