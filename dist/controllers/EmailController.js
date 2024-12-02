@@ -190,9 +190,9 @@ class EmailController {
     }
     async TesteEmail5DiasAntes() {
         const date = new Date();
-        const dataAlvo = (0, date_fns_1.subDays)(date, 5); // Calcula a data alvo, 5 dias antes
+        const dataAlvo = (0, date_fns_1.addDays)(date, 5); // Calcula a data alvo, 5 dias após a data atual
         const anoAlvo = dataAlvo.getFullYear();
-        const mesAlvo = dataAlvo.getMonth() + 1;
+        const mesAlvo = dataAlvo.getMonth() + 1; // Meses começam em 0 no JavaScript
         const diaAlvo = dataAlvo.getDate();
         const resultados = ds_1.AppDataSource.getRepository(Record_1.Record);
         const clientes = await resultados.find({
@@ -203,6 +203,7 @@ class EmailController {
                 login: "PEDROJOVANUZZI"
             }
         });
+        console.log("RUNNING CRONTAB 5 DIAS ANTES");
         console.log(clientes);
         for (const client of clientes) {
             try {
@@ -216,7 +217,7 @@ class EmailController {
                     year: 'numeric'
                 });
                 console.log("Cliente: " + client.login);
-                console.log("\nData de Vencimento: " + formattedDate);
+                console.log("Data de Vencimento: " + formattedDate);
                 const pppoe = client.login;
                 const clientesRepo = ds_1.AppDataSource.getRepository(User_1.User);
                 const email = await clientesRepo.findOne({ where: { login: pppoe, cli_ativado: "s" } });
@@ -242,9 +243,10 @@ class EmailController {
                     };
                     try {
                         await transporter.sendMail(mailOptions);
+                        console.log("Email enviado para:", email.email);
                     }
                     catch (error) {
-                        console.log(error);
+                        console.log("Erro ao enviar email:", error);
                         this.logError(error, email.email, client);
                     }
                 }
@@ -257,9 +259,10 @@ class EmailController {
                     };
                     try {
                         await transporter.sendMail(mailOptions);
+                        console.log("Email enviado para:", email.email);
                     }
                     catch (error) {
-                        console.log(error);
+                        console.log("Erro ao enviar email:", error);
                         this.logError(error, email.email, client);
                     }
                 }
@@ -273,7 +276,7 @@ class EmailController {
                 }
             }
             catch (error) {
-                console.log(error);
+                console.log("Erro no processamento do cliente:", error);
                 this.logError(error, "N/A", client);
             }
         }

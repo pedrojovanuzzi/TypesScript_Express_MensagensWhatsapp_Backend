@@ -4,7 +4,7 @@ import { Record } from "../entities/Record";
 import { Pix } from "../entities/Pix";
 import { User } from "../entities/User";
 import { AppDataSource } from "../database/ds";
-import { format, subDays, getDay, getMonth } from "date-fns";
+import { format, subDays, addDays, getDay, getMonth } from "date-fns";
 import { Raw } from "typeorm";
 import path from 'path';
 import fs, { link } from "fs";
@@ -220,9 +220,9 @@ class EmailController {
     
     async TesteEmail5DiasAntes() {
         const date = new Date();
-        const dataAlvo = subDays(date, 5); // Calcula a data alvo, 5 dias antes
+        const dataAlvo = addDays(date, 5); // Calcula a data alvo, 5 dias após a data atual
         const anoAlvo = dataAlvo.getFullYear();
-        const mesAlvo = dataAlvo.getMonth() + 1;
+        const mesAlvo = dataAlvo.getMonth() + 1; // Meses começam em 0 no JavaScript
         const diaAlvo = dataAlvo.getDate();
     
         const resultados = AppDataSource.getRepository(Record);
@@ -235,6 +235,7 @@ class EmailController {
             }
         });
     
+        console.log("RUNNING CRONTAB 5 DIAS ANTES");
         console.log(clientes);
     
         for (const client of clientes) {
@@ -253,7 +254,7 @@ class EmailController {
                 });
     
                 console.log("Cliente: " + client.login);
-                console.log("\nData de Vencimento: " + formattedDate);
+                console.log("Data de Vencimento: " + formattedDate);
     
                 const pppoe = client.login;
     
@@ -286,8 +287,9 @@ class EmailController {
     
                     try {
                         await transporter.sendMail(mailOptions);
+                        console.log("Email enviado para:", email.email);
                     } catch (error) {
-                        console.log(error);
+                        console.log("Erro ao enviar email:", error);
                         this.logError(error, email.email, client);
                     }
                 } else if (email?.email) {
@@ -300,8 +302,9 @@ class EmailController {
     
                     try {
                         await transporter.sendMail(mailOptions);
+                        console.log("Email enviado para:", email.email);
                     } catch (error) {
-                        console.log(error);
+                        console.log("Erro ao enviar email:", error);
                         this.logError(error, email.email, client);
                     }
                 } else {
@@ -314,7 +317,7 @@ class EmailController {
                     fs.unlinkSync(localPdfPath);
                 }
             } catch (error) {
-                console.log(error);
+                console.log("Erro no processamento do cliente:", error);
                 this.logError(error, "N/A", client);
             }
         }
