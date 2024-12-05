@@ -116,8 +116,8 @@ class EmailController {
         } finally {
             client.end();
         }
-      }
-      
+    }
+
     async TesteEmail() {
         const date = new Date();
         const anoAtual = date.getFullYear();
@@ -219,6 +219,109 @@ class EmailController {
     async TesteEmail5DiasAntes() {
         const date = new Date();
         const dataAlvo = addDays(date, 5); // Calcula a data alvo, 5 dias após a data atual
+        const anoAlvo = dataAlvo.getFullYear();
+        const mesAlvo = dataAlvo.getMonth() + 1;
+        const diaAlvo = dataAlvo.getDate();
+    
+        const resultados = AppDataSource.getRepository(Record);
+        const clientes = await resultados.find({
+            where: {
+                datavenc: Raw(alias => `(YEAR(${alias}) = ${anoAlvo} AND MONTH(${alias}) = ${mesAlvo} AND DAY(${alias}) = ${diaAlvo})`),
+                datadel: Raw(alias => `${alias} IS NULL`),
+                status: Raw(alias => `${alias} != 'pago'`),
+                login: "PEDROJOVANUZZI"
+            }
+        });
+    
+        console.log("RUNNING CRONTAB 5 DIAS ANTES");
+        console.log(clientes);
+    
+        for (const client of clientes) {
+            try {
+                let msg = "";
+    
+                const idBoleto = client.uuid_lanc;
+    
+                const pix_resultados = AppDataSource.getRepository(Pix);
+                const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
+    
+                // Ajuste para parsear a data corretamente
+                const parsedDate = parseISO(String(client.datavenc)); // Se datavenc for string
+                const formattedDate = format(parsedDate, 'dd/MM/yyyy'); // Formata a data
+    
+                console.log("Cliente: " + client.login);
+                console.log("Data de Vencimento: " + formattedDate);
+    
+                const pppoe = client.login;
+    
+                const clientesRepo = AppDataSource.getRepository(User);
+                const email = await clientesRepo.findOne({ where: { login: pppoe, cli_ativado: "s" } });
+    
+                const html_msg = this.msg(msg, formattedDate, pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero);
+    
+                const ftpHost = String(process.env.HOST_FTP);
+                const ftpUser = String(process.env.USERNAME_FTP);
+                const ftpPassword = String(process.env.PASSWORD_FTP);
+                const remotePdfPath = `${pdfPath}${idBoleto}.pdf`;
+                const localPdfPath = path.join(__dirname, "..", "..", 'temp', `${idBoleto}.pdf`);
+    
+                const pdfDownload = await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
+    
+                if (email?.email && pdfDownload) {
+                    const mailOptions = {
+                        from: process.env.MAILGUNNER_USER,
+                        to: String(email.email),
+                        subject: `Sua Fatura Vence em 5 Dias ${pppoe.toUpperCase()}`,
+                        html: html_msg,
+                        attachments: [
+                            {
+                                filename: 'Boleto.pdf',
+                                path: localPdfPath
+                            }
+                        ]
+                    };
+    
+                    try {
+                        await transporter.sendMail(mailOptions);
+                        console.log("Email enviado para:", email.email);
+                    } catch (error) {
+                        console.log("Erro ao enviar email:", error);
+                        this.logError(error, email.email, client);
+                    }
+                } else if (email?.email) {
+                    const mailOptions = {
+                        from: process.env.MAILGUNNER_USER,
+                        to: String(email.email),
+                        subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
+                        html: html_msg,
+                    };
+    
+                    try {
+                        await transporter.sendMail(mailOptions);
+                        console.log("Email enviado para:", email.email);
+                    } catch (error) {
+                        console.log("Erro ao enviar email:", error);
+                        this.logError(error, email.email, client);
+                    }
+                } else {
+                    console.log("Sem Email Cadastrado");
+                    this.logError("Sem Email Cadastrado", "Email", client);
+                }
+    
+                // Após enviar o e-mail, deletar o arquivo local temporário
+                if (fs.existsSync(localPdfPath)) {
+                    fs.unlinkSync(localPdfPath);
+                }
+            } catch (error) {
+                console.log("Erro no processamento do cliente:", error);
+                this.logError(error, "N/A", client);
+            }
+        }
+    }
+
+    async TesteEmail15DiasAntes() {
+        const date = new Date();
+        const dataAlvo = addDays(date, 15); // Calcula a data alvo, 5 dias após a data atual
         const anoAlvo = dataAlvo.getFullYear();
         const mesAlvo = dataAlvo.getMonth() + 1;
         const diaAlvo = dataAlvo.getDate();
