@@ -45,7 +45,7 @@ node_cron_1.default.schedule('0 0 * * *', () => {
 });
 node_cron_1.default.schedule('*/1 * * * *', () => {
     console.log('RUNNING CRONTAB TEST');
-    // emailController.TesteEmail();
+    emailController.TesteEmail();
     // emailController.TesteEmail5DiasAntes();
     // emailController.TesteEmail10DiasAntes();
 });

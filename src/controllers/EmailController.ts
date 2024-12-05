@@ -54,7 +54,7 @@ cron.schedule('0 0 * * *', () => {
 
 cron.schedule('*/1 * * * *', () => {
     console.log('RUNNING CRONTAB TEST');
-    // emailController.TesteEmail();
+    emailController.TesteEmail();
     // emailController.TesteEmail5DiasAntes();
     // emailController.TesteEmail10DiasAntes();
 })
