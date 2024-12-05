@@ -54,7 +54,7 @@ cron.schedule('0 0 * * *', () => {
 
 cron.schedule('*/1 * * * *', () => {
     console.log('RUNNING CRONTAB TEST');
-    emailController.TesteEmail();
+    // emailController.TesteEmail();
     // emailController.TesteEmail5DiasAntes();
     // emailController.TesteEmail10DiasAntes();
 })
@@ -125,7 +125,7 @@ class EmailController {
     }
 
     async TesteEmail() {
-        await this.processTestClients(0);
+        await this.processTestClients(0, "Sua Fatura Vence Hoje");
     }
     
     async TesteEmail5DiasAntes() {
@@ -182,101 +182,7 @@ class EmailController {
     }
 
     async DiasDoVencimento() {
-        const date = new Date();
-        const anoAtual = date.getFullYear();
-        const MesDeHoje = date.getMonth() + 1; // Meses em JavaScript vão de 0 a 11, então somamos 1
-        const diaHoje = date.getDate();
-    
-        const resultados = AppDataSource.getRepository(Record);
-        const clientes = await resultados.find({
-            where: {
-                datavenc: Raw(alias => `(YEAR(${alias}) = ${anoAtual} AND MONTH(${alias}) = ${MesDeHoje} AND DAY(${alias}) = ${diaHoje})`),
-                datadel: Raw(alias => `${alias} IS NULL`),
-                status: Raw(alias => `${alias} != 'pago'`)
-            }
-        });
-    
-        console.log("Quantidade de Clientes: " + clientes.length);
-        let remainingClients = clientes.length;
-    
-        for (const client of clientes) {
-            try {
-                let msg = "";
-    
-                const idBoleto = client.uuid_lanc;
-                const pix_resultados = AppDataSource.getRepository(Pix);
-                const pix = await pix_resultados.findOne({ where: { titulo: idBoleto } });
-    
-                const formattedDate = format(parseISO(String(client.datavenc)), 'dd/MM/yyyy');
-                console.log("Cliente: " + client.login);
-                console.log("\nData de Vencimento: " + formattedDate);
-                remainingClients--;
-                console.log("Clientes restantes: " + remainingClients);
-    
-                const pppoe = client.login;
-    
-                const clientes = AppDataSource.getRepository(User);
-                const email = await clientes.findOne({ where: { login: pppoe, cli_ativado: "s" } });
-    
-                const html_msg = this.msg(msg, formattedDate, pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero);
-    
-                const ftpHost = String(process.env.HOST_FTP);
-                const ftpUser = String(process.env.USERNAME_FTP);
-                const ftpPassword = String(process.env.PASSWORD_FTP);
-                const remotePdfPath = `${pdfPath}${idBoleto}.pdf`;
-                const localPdfPath = path.join(__dirname, "..", "..", 'temp', `${idBoleto}.pdf`);
-    
-                const pdfDownload = await this.downloadPdfFromFtp(ftpHost, ftpUser, ftpPassword, remotePdfPath, localPdfPath);
-    
-                if (email?.email && pdfDownload) {
-                    const mailOptions = {
-                        from: process.env.MAILGUNNER_USER,
-                        to: String(email.email),
-                        subject: `Sua Fatura Vence Hoje ${pppoe.toUpperCase()}`,
-                        html: html_msg,
-                        attachments: [
-                            {
-                                filename: 'Boleto.pdf',
-                                path: localPdfPath
-                            }
-                        ]
-                    };
-    
-                    try {
-                        transporter.sendMail(mailOptions);
-                        this.logSend(email.email, client);
-                    } catch (error) {
-                        console.log(error);
-                        this.logError(error, email.email, client);
-                    }
-                } else if (email?.email) {
-                    const mailOptions = {
-                        from: process.env.MAILGUNNER_USER,
-                        to: String(email.email),
-                        subject: `Sua Fatura Vence Hoje ${pppoe.toUpperCase()}`,
-                        html: html_msg,
-                    };
-    
-                    try {
-                        transporter.sendMail(mailOptions);
-                        this.logSend(email.email, client);
-                    } catch (error) {
-                        console.log(error);
-                        this.logError(error, email.email, client);
-                    }
-                } else {
-                    console.log("Sem Email Cadastrado");
-                    this.logError("Sem Email Cadastrado", "Email", client);
-                }
-    
-                await sleep(50000);
-            } catch (error) {
-                console.log(error);
-                this.logError(error, "N/A", client);
-            }
-        }
-    
-        console.log("Finalizado Crontab do Dia");
+        await this.processClients(0, "Sua Fatura Vence Hoje");
     }
 
     async DiasAntes5() {
@@ -287,7 +193,7 @@ class EmailController {
         await this.processClients(10);
     }
 
-    async processClients(diasAntes: number) {
+    async processClients(diasAntes: number, opcionalMessage? : string) {
         const date = new Date();
         const dataAlvo = addDays(date, diasAntes);
         const anoAlvo = dataAlvo.getFullYear();
@@ -339,7 +245,7 @@ class EmailController {
                     const mailOptions = {
                         from: process.env.MAILGUNNER_USER,
                         to: String(email.email),
-                        subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
+                        subject: `${opcionalMessage ? `${opcionalMessage} ${client.login}` : `Wip Telecom Boleto Mensalidade ${formattedDate}`} `,
                         html: html_msg,
                         attachments: [
                             {
@@ -360,7 +266,7 @@ class EmailController {
                     const mailOptions = {
                         from: process.env.MAILGUNNER_USER,
                         to: String(email.email),
-                        subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
+                        subject: `${opcionalMessage ? `${opcionalMessage} ${client.login}` : `Wip Telecom Boleto Mensalidade ${formattedDate}`} `,
                         html: html_msg,
                     };
     
@@ -387,7 +293,7 @@ class EmailController {
         console.log(`Finalizado Crontab ${diasAntes} Dias Antes`);
     }
 
-    async processTestClients(diasAntes: number) {
+    async processTestClients(diasAntes: number, opcionalMessage? : string) {
         const date = new Date();
         const dataAlvo = addDays(date, diasAntes);
         const anoAlvo = dataAlvo.getFullYear();
@@ -440,7 +346,7 @@ class EmailController {
                     const mailOptions = {
                         from: process.env.MAILGUNNER_USER,
                         to: String(email.email),
-                        subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
+                        subject: `${opcionalMessage ? `${opcionalMessage} ${client.login}` : `Wip Telecom Boleto Mensalidade ${formattedDate}`} `,
                         html: html_msg,
                         attachments: [
                             {
@@ -461,7 +367,7 @@ class EmailController {
                     const mailOptions = {
                         from: process.env.MAILGUNNER_USER,
                         to: String(email.email),
-                        subject: `Wip Telecom Boleto Mensalidade ${formattedDate}`,
+                        subject: `${opcionalMessage ? `${opcionalMessage} ${client.login}` : `Wip Telecom Boleto Mensalidade ${formattedDate}`} `,
                         html: html_msg,
                     };
     
