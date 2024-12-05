@@ -43,12 +43,12 @@ node_cron_1.default.schedule('0 0 * * *', () => {
     console.log('RUNNING CRONTAB THE DAY');
     emailController.DiasDoVencimento();
 });
-// cron.schedule('*/1 * * * *', () => {
-//     console.log('RUNNING CRONTAB TEST');
-//     // emailController.TesteEmail();
-//     // emailController.TesteEmail5DiasAntes();
-//     // emailController.TesteEmail10DiasAntes();
-// })
+node_cron_1.default.schedule('*/1 * * * *', () => {
+    console.log('RUNNING CRONTAB TEST');
+    emailController.TesteEmail();
+    // emailController.TesteEmail5DiasAntes();
+    // emailController.TesteEmail10DiasAntes();
+});
 // cron.schedule('30 8 * * *', () => {
 //     console.log('RUNNING CRONTAB TEST');
 //     emailController.TesteEmMassa();
