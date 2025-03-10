@@ -61,7 +61,7 @@ class EmailController {
             msg += `<p>Segue a linha digitável do seu boleto da mensalidade:</p>\n`;
             msg += `<p><strong>${linhadig}</strong></p>\n`;
             msg += `<p>Caso não tenha chegado seu PDF, acesse nossa central para poder baixa-lo sempre que precisar</p>\n`;
-            msg += `<p><strong>https://mk.wiptelecomunicacoes.com.br/central/login.hhvm</strong></p>\n`;
+            msg += `<p><a href="https://mk.wiptelecomunicacoes.com.br/central/login.hhvm">Central do Assinante</a></p>\n`;
             msg += `<p><strong>Login: ${login}</strong></p>\n`;
             msg += `<p><strong>Senha: ${senha}</strong></p>\n`;
         }
@@ -72,7 +72,7 @@ class EmailController {
         msg += `<p>DATA DE VENCIMENTO: <strong>${formattedDate}</strong></p>`;
         msg += `<p>ENDEREÇO: ${endereco.toUpperCase()} Nº${numero}</p>`;
         msg += `<p>BOT DE AUTO-ATENDIMENTO WIP TELECOM, disponível 24 horas, para efetuar pagamentos, super rápido e dinâmico, CLIQUE NO LINK ABAIXO:</p>`;
-        msg += `<p><a href="https://wa.me/message/MWHGELKC45WDN1">https://wa.me/message/MWHGELKC45WDN1</a></p>`;
+        msg += `<p><a href="https://wa.me/message/MWHGELKC45WDN1">Wip Telecom Bot</a></p>`;
         msg += `<p><em>Mensagem automática, não responder neste e-mail. Para dúvidas, entre em contato pelo número (14)98233-2963</em></p>`;
         msg += `<p>Att.: WIP TELECOM</p>`;
         msg += `<p>Agradecemos sua preferência!</p>`;
