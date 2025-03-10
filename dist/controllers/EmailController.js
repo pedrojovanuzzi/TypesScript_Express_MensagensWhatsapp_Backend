@@ -55,11 +55,15 @@ node_cron_1.default.schedule('0 0 * * *', () => {
 // })
 const pdfPath = '/opt/mk-auth/print_pdf/boletos/'; // Caminho do arquivo no sistema de arquivos
 class EmailController {
-    msg(msg, formattedDate, login, linhadig, pix, endereco, numero) {
+    msg(msg, formattedDate, login, linhadig, pix, endereco, numero, senha) {
         msg = `<p><strong>${login.toUpperCase()}</strong></p>\n`;
         if (linhadig) {
             msg += `<p>Segue a linha digitável do seu boleto da mensalidade:</p>\n`;
             msg += `<p><strong>${linhadig}</strong></p>\n`;
+            msg += `<p>Caso não tenha chegado seu PDF, acesse nossa central para poder baixa-lo sempre que precisar</p>\n`;
+            msg += `<p><strong>https://mk.wiptelecomunicacoes.com.br/central/login.hhvm</strong></p>\n`;
+            msg += `<p><strong>Login: ${login}</strong></p>\n`;
+            msg += `<p><strong>Senha: ${senha}</strong></p>\n`;
         }
         if (pix) {
             msg += `<p>Segue o código <strong>copia e cola</strong> do Pix:</p>\n`;
@@ -187,7 +191,7 @@ class EmailController {
                 const pppoe = client.login;
                 const clientesRepo = ds_1.AppDataSource.getRepository(User_1.User);
                 const email = await clientesRepo.findOne({ where: { login: pppoe, cli_ativado: "s" } });
-                const html_msg = this.msg(msg, formattedDate, pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero);
+                const html_msg = this.msg(msg, formattedDate, pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero, email?.cpf_cnpj);
                 const ftpHost = String(process.env.HOST_FTP);
                 const ftpUser = String(process.env.USERNAME_FTP);
                 const ftpPassword = String(process.env.PASSWORD_FTP);
@@ -277,7 +281,7 @@ class EmailController {
                 const pppoe = client.login;
                 const clientesRepo = ds_1.AppDataSource.getRepository(User_1.User);
                 const email = await clientesRepo.findOne({ where: { login: pppoe, cli_ativado: "s" } });
-                const html_msg = this.msg(msg, formattedDate, pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero);
+                const html_msg = this.msg(msg, formattedDate, pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero, email?.cpf_cnpj);
                 const ftpHost = String(process.env.HOST_FTP);
                 const ftpUser = String(process.env.USERNAME_FTP);
                 const ftpPassword = String(process.env.PASSWORD_FTP);

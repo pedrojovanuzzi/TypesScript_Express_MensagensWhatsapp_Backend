@@ -71,13 +71,19 @@ const pdfPath = '/opt/mk-auth/print_pdf/boletos/'; // Caminho do arquivo no sist
 
 class EmailController {
 
-    msg(msg : string, formattedDate : string, login : string, linhadig : string, pix : any, endereco : any, numero : any){
+    msg(msg : string, formattedDate : string, login : string, linhadig : string, pix : any, endereco : any, numero : any, senha : any) {
 
         msg = `<p><strong>${login.toUpperCase()}</strong></p>\n`;
 
         if (linhadig) {
             msg += `<p>Segue a linha digitável do seu boleto da mensalidade:</p>\n`;
             msg += `<p><strong>${linhadig}</strong></p>\n`;
+
+            msg += `<p>Caso não tenha chegado seu PDF, acesse nossa central para poder baixa-lo sempre que precisar</p>\n`;
+            msg += `<p><strong>https://mk.wiptelecomunicacoes.com.br/central/login.hhvm</strong></p>\n`;
+
+            msg += `<p><strong>Login: ${login}</strong></p>\n`;
+            msg += `<p><strong>Senha: ${senha}</strong></p>\n`;
         }
     
         if (pix) {
@@ -231,7 +237,7 @@ class EmailController {
                 const clientesRepo = AppDataSource.getRepository(User);
                 const email = await clientesRepo.findOne({ where: { login: pppoe, cli_ativado: "s" } });
     
-                const html_msg = this.msg(msg, formattedDate, pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero);
+                const html_msg = this.msg(msg, formattedDate, pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero, email?.cpf_cnpj);
     
                 const ftpHost = String(process.env.HOST_FTP);
                 const ftpUser = String(process.env.USERNAME_FTP);
@@ -332,7 +338,7 @@ class EmailController {
                 const clientesRepo = AppDataSource.getRepository(User);
                 const email = await clientesRepo.findOne({ where: { login: pppoe, cli_ativado: "s" } });
     
-                const html_msg = this.msg(msg, formattedDate, pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero);
+                const html_msg = this.msg(msg, formattedDate, pppoe, client.linhadig, pix?.qrcode, email?.endereco, email?.numero, email?.cpf_cnpj);
     
                 const ftpHost = String(process.env.HOST_FTP);
                 const ftpUser = String(process.env.USERNAME_FTP);
