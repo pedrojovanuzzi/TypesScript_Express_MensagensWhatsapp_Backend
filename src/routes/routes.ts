@@ -6,7 +6,7 @@ import path from "path";
 
 const router = Router();
 
-router.post('/', LoginController.login);
+router.post('/login', LoginController.login);
 router.post('/EnviaMensagem', MensagensController.MensagensBairro);
 router.post('/EnviaMensagemPON', MensagensController.MensagensPON);
 router.get('*', (req : Request, res: Response) => {
