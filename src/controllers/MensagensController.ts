@@ -201,6 +201,88 @@ class MensagensController{
         res.sendStatus(200);
     }
 
+    async MensagensGrupo(req : Request, res : Response){
+      const {titulo, msg, grupo} = req.query;
+      const {password} = req.body;
+
+      console.log(req.query);
+      
+      if(password != API_PASSWORD){
+          console.log("Senha Incorreta");
+          res.sendStatus(400);
+          
+      }
+      else{
+      const resultados = AppDataSource.getRepository(User);
+
+      const clientes = await resultados.find({where: {grupo: String(grupo), cli_ativado: "s"}});
+
+      // console.log(clientes);
+      
+
+      if (clientes.length === 0) {
+          console.log("Sem Clientes");
+          return res.send("Sem Clientes");
+        }
+
+        
+      await Promise.all(
+      clientes.map(async (client : any) => {
+          try {
+              const number = Number("55" + client.celular.replace(/[^\d]/g, ''));
+              console.log(number);
+    
+              const text = await axios.post(
+                url,
+                {
+                  messaging_product: 'whatsapp',
+                  recipient_type: 'individual',
+                  to: number,
+                  type: 'template',
+                  template: {
+                    name: "aviso_pon",
+                    language: {
+                      code: "pt_BR",
+                    },
+                    components: [
+                      {
+                        type: "header",
+                        parameters: [
+                          {
+                            type: "text",
+                            text: String(titulo),
+                          },
+                        ],
+                      },
+                      {
+                        type: "body",
+                        parameters: [
+                          {
+                            type: "text",
+                            text: String(msg),
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${Token}`,
+                    'Content-Type': 'application/json',
+                  },
+                }
+              );
+    
+              console.log('Template message sent successfully:', text.data);
+            } catch (error) {
+              console.error('Error sending template message:', error);
+            }   
+      }))
+      }
+      res.sendStatus(200);
+  }
+
 }
 
 export default new MensagensController();
